@@ -2682,6 +2682,201 @@
             background: var(--warn-soft);
         }
 
+        /* ---------- Excel 取込プレビュー：集計・分類・折りたたみ ---------- */
+        .imp-summary {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 10px;
+            margin-bottom: 16px;
+        }
+
+        .imp-stat {
+            display: flex;
+            flex-direction: column;
+            gap: 1px;
+            padding: 10px 14px;
+            border: 1px solid var(--line);
+            border-radius: 12px;
+            background: color-mix(in srgb, var(--surface2) 45%, var(--surface));
+        }
+
+        .imp-stat span {
+            color: var(--ink3);
+            font-size: 11.5px;
+        }
+
+        .imp-stat b {
+            font: 700 22px/1.2 var(--display);
+            color: var(--ink);
+        }
+
+        .imp-stat.warn {
+            border-color: color-mix(in srgb, var(--warn) 35%, var(--line));
+            background: var(--warn-soft);
+        }
+
+        .imp-stat.warn b {
+            color: var(--warn);
+        }
+
+        .imp-skill-head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            padding: 14px 0 2px;
+        }
+
+        .imp-skill-head b {
+            font: 700 13.5px/1.4 var(--display);
+        }
+
+        /* 要確認行は年数欄だけを強調し、認識済みのスキル名は通常表示のままにする */
+        .pf-row.imp-skill-row.q .field {
+            border-color: var(--line);
+            background: var(--surface);
+        }
+
+        .pf-row.imp-skill-row.q .field.num {
+            border-color: var(--warn);
+            background: var(--warn-soft);
+        }
+
+        .imp-group-head {
+            display: flex;
+            align-items: baseline;
+            gap: 8px;
+            flex-wrap: wrap;
+            padding: 10px 0 2px;
+            color: var(--ink2);
+        }
+
+        .imp-group-head b {
+            font-size: 13px;
+        }
+
+        /* 分组标题内的操作按钮（年数を編集 等）靠右对齐 */
+        .imp-group-head .gr-btn {
+            margin-left: auto;
+            padding: 4px 10px;
+        }
+
+        /* ---------- 自動認識済み技能の読み取り専用チップ群（读取体验优化） ---------- */
+        .imp-chipwall {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            padding: 2px 0 8px;
+        }
+
+        .imp-chipwall .skchip {
+            display: inline-flex;
+            align-items: baseline;
+            gap: 5px;
+            padding: 3px 10px;
+            border: 1px solid var(--line);
+            border-radius: 999px;
+            background: color-mix(in srgb, var(--surface2) 55%, var(--surface));
+            font-size: 12.5px;
+            line-height: 1.5;
+            color: var(--ink2);
+            white-space: nowrap;
+        }
+
+        .imp-chipwall .skchip b {
+            font: 600 11px var(--mono);
+            color: var(--accent);
+        }
+
+        /* 要確認技能のチップ：年数未入力を warn 色で強調 */
+        .imp-chipwall .skchip.q {
+            border-color: color-mix(in srgb, var(--warn) 35%, var(--line));
+            background: var(--warn-soft);
+        }
+
+        .imp-chipwall .skchip.q b {
+            color: var(--warn);
+        }
+
+        .imp-skill-group {
+            border-top: 1px solid var(--line);
+            margin-top: 10px;
+        }
+
+        .imp-skill-group summary {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            padding: 12px 0;
+            cursor: pointer;
+            list-style: none;
+            user-select: none;
+        }
+
+        .imp-skill-group summary::-webkit-details-marker {
+            display: none;
+        }
+
+        .imp-skill-group summary b {
+            font-size: 13px;
+        }
+
+        .imp-skill-group summary .imp-chev,
+        .imp-proj-panel summary .imp-chev {
+            vertical-align: middle;
+            transition: transform .2s ease;
+            flex-shrink: 0;
+        }
+
+        .imp-skill-group[open] summary .imp-chev,
+        .imp-proj-panel[open] summary .imp-chev {
+            transform: rotate(180deg);
+        }
+
+        .imp-skill-group .imp-skill-list {
+            padding-bottom: 4px;
+        }
+
+        /* 項目経歴は既定で閉じ、必要な時だけ展開する */
+        .imp-proj-panel summary {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            padding: 18px 20px 14px;
+            border-bottom: 1px solid var(--line);
+            cursor: pointer;
+            list-style: none;
+            user-select: none;
+        }
+
+        .imp-proj-panel summary::-webkit-details-marker {
+            display: none;
+        }
+
+        .imp-proj-panel:not([open]) summary {
+            border-bottom: 0;
+        }
+
+        .imp-proj-panel summary .imp-proj-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            min-width: 0;
+        }
+
+        .imp-proj-panel summary h2 {
+            font: 700 15px/1.4 var(--display);
+            letter-spacing: -.01em;
+        }
+
+        /* モバイル専用の固定操作条は PC では非表示 */
+        .imp-mobile-actions,
+        .imp-mobile-spacer {
+            display: none;
+        }
+
         /* 总览看板专属布局 */
         .overview-grid {
             display: grid;
@@ -3498,6 +3693,62 @@
             .drawer.sheet .mobile-menu-item {
                 min-height: 92px;
             }
+
+            /* Excel 取込：登録操作を常時押せるよう 5 栏ナビの直上に固定 */
+            .imp-actions-inline {
+                display: none;
+            }
+
+            .imp-mobile-actions {
+                position: fixed;
+                left: 0;
+                right: 0;
+                bottom: calc(62px + env(safe-area-inset-bottom, 0px));
+                z-index: 30;
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                padding: 8px max(12px, env(safe-area-inset-right, 0px)) 8px max(12px, env(safe-area-inset-left, 0px));
+                background: color-mix(in srgb, var(--surface) 94%, transparent);
+                backdrop-filter: blur(18px);
+                -webkit-backdrop-filter: blur(18px);
+                border-top: 1px solid var(--line);
+                box-shadow: 0 -8px 24px rgba(20, 24, 33, .08);
+            }
+
+            .imp-mobile-actions .imp-mobile-meta {
+                flex: 1;
+                min-width: 0;
+                display: flex;
+                flex-direction: column;
+                gap: 1px;
+                line-height: 1.25;
+            }
+
+            .imp-mobile-actions .imp-mobile-meta b {
+                font-size: 12.5px;
+                color: var(--ink2);
+            }
+
+            .imp-mobile-actions .imp-mobile-meta b.warn {
+                color: var(--warn);
+            }
+
+            .imp-mobile-actions .imp-mobile-meta small {
+                color: var(--ink3);
+                font-size: 10.5px;
+            }
+
+            .imp-mobile-actions .btn {
+                flex-shrink: 0;
+                min-height: 40px;
+                padding: 8px 14px;
+            }
+
+            .imp-mobile-spacer {
+                display: block;
+                height: 68px;
+            }
         }
 
         /* ---------- 手机（≤640px）：高密度组件级重排 ---------- */
@@ -4118,6 +4369,80 @@
             .pf-row>span:first-child {
                 font-weight: 600;
                 color: var(--ink);
+            }
+
+            /* 取込技能行保持两列，避免手机端每条技能占三行高度 */
+            .pf-row.imp-skill-row {
+                grid-template-columns: minmax(0, 1fr) 72px;
+                gap: 4px 8px;
+                padding: 6px 0;
+            }
+
+            .pf-row.imp-skill-row>* {
+                grid-column: auto;
+            }
+
+            /* 说明统一放在分组标题，手机端不再逐行重复 */
+            .pf-row.imp-skill-row small {
+                display: none;
+            }
+
+            .pf-row.imp-skill-row .field {
+                padding: 6px 8px;
+            }
+
+            .imp-summary {
+                gap: 6px;
+                margin-bottom: 10px;
+            }
+
+            .imp-stat {
+                padding: 8px 9px;
+                border-radius: 10px;
+            }
+
+            .imp-stat span {
+                font-size: 10.5px;
+            }
+
+            .imp-stat b {
+                font-size: 18px;
+            }
+
+            .imp-skill-head {
+                padding-top: 10px;
+            }
+
+            /* 手机端：チップ墙更紧凑，读取优先 */
+            .imp-chipwall {
+                gap: 5px;
+                padding-bottom: 4px;
+            }
+
+            .imp-chipwall .skchip {
+                font-size: 12px;
+                padding: 3px 8px;
+            }
+
+            .imp-group-head .gr-btn {
+                margin-left: auto;
+                padding: 5px 12px;
+            }
+
+            .imp-skill-group summary {
+                padding: 10px 0;
+            }
+
+            .imp-proj-panel summary {
+                padding: 14px 14px 12px;
+            }
+
+            .imp-proj-panel summary h2 {
+                font-size: 14px;
+            }
+
+            .imp-proj-panel summary .faint {
+                display: none;
             }
 
             .kv {
@@ -4916,12 +5241,31 @@
         /* ---------------- 匹配计算引擎 (PRD v1.1 §6.4 规范算法，兼容中日文字符) ---------------- */
         const JR = { N1: 5, N2: 4, N3: 3, N4: 2, N5: 1 };
         const JS = { N1: 1, N2: .8, N3: .6, N4: .3, N5: .3, '未受験': 0, '未考级': 0, '不明': 0, '未知': 0 };
-        const BS = { 'ビジネス流暢': 1, '商务流畅': 1, '日常会話': .6, '日常沟通': .6, '簡単な会話': .3, '简单沟通': .3, '不明': 0, '未知': 0 };
+        const BS = { 'ビジネス流暢': 1, '商务流畅': 1, '日常会話': .6, '日常沟通': .6, '簡単な会話': .3, '简单沟通': .3, '不明': 0, '不明': 0, '未知': 0 };
+
+        /**
+         * 判定一条技术者技能是否"无年数记录"
+         * 约定：years 为空、'' 或 ≤0 均视为年数未确认
+         * @param {Object|null} f 技术者技能对象
+         * @returns {boolean}
+         */
+        function skillNoYears(f) {
+            return !!f && !(+f.years > 0);
+        }
 
         function evaluate(c, t) {
+            // 无年数技能（Excel 仅登记技能名，无实绩年数）的语义：
+            // 1) 判定为"有过相关经验"，作为普通技能对待；
+            // 2) 不参与权重加点评分（也不计入权重分母，避免拉低总分）；
+            // 3) 命中必須(isHard)条件时不自动淘汰，改为"要確認"挂起人工判断。
+            const noYearSkill = k => skillNoYears(t.skills.find(s => norm(s.name) === norm(k.skillName)));
             const hard = [], items = [], pending = [], out = [];
             let sw = c.japaneseWeight || 0, acc = 0;
-            c.skillConditions.forEach(k => sw += +k.weight || 0);
+            // 无年数技能不参与权重判定：权重分母中同样剔除，保持其余条件分数不被稀释
+            c.skillConditions.forEach(k => {
+                if (noYearSkill(k)) return;
+                sw += +k.weight || 0;
+            });
             const raw = [];
 
             // 0. 时间硬性判定与可解释性
@@ -4942,6 +5286,21 @@
             // 1. 技能硬性判断与得分
             for (const k of c.skillConditions) {
                 const f = t.skills.find(s => norm(s.name) === norm(k.skillName));
+                // 无年数技能：判定为有过相关经验，但不参与权重加点评分；
+                // 命中必須条件时不自动判 fail，改为"要確認"挂起人工判断（安全匹配）
+                if (noYearSkill(k)) {
+                    raw.push({
+                        label: k.skillName,
+                        tech: '経験あり（年数要確認）',
+                        req: k.minYears ? '≥ ' + k.minYears + ' 年' : '要件満たす',
+                        s: null, w: +k.weight || 0, y: 0, hasIt: true, flag: true
+                    });
+                    if (k.isHard) {
+                        hard.push({ label: k.skillName, tech: '経験あり（年数要確認）', req: '≥ ' + k.minYears + ' 年', st: 'pend' });
+                        pending.push(`スキル「${k.skillName}」の実務経験はあるが年数が確認できないため、自動足切りせず要確認（加点評価の対象外）。`);
+                    }
+                    continue;
+                }
                 const y = f ? +f.years : 0;
                 if (k.isHard) {
                     const ok = !!f && y >= k.minYears;
@@ -6364,7 +6723,10 @@
          */
         function candHTML(r, i, c) {
             const t = r.t, rec = recOf(c.id, t.id), open = S.open[t.id];
-            const chips = r.items.map(x => `<span class="chip ${x.s >= 1 ? 'full' : x.s > 0 ? 'part' : 'none'}">${esc(x.label)} <i>${x.hasIt ? x.y + '年' : '—'}</i></span>`).join('');
+            // 无年数技能（s=null 对象外）在候补卡片的技能 chip 中展示为「経験あり・年数要確認」
+            const chips = r.items.map(x => x.s == null
+                ? `<span class="chip part" title="実務経験はあるが年数が確認できないため、加点評価の対象外">${esc(x.label)} <i>経験あり</i></span>`
+                : `<span class="chip ${x.s >= 1 ? 'full' : x.s > 0 ? 'part' : 'none'}">${esc(x.label)} <i>${x.hasIt ? x.y + '年' : '—'}</i></span>`).join('');
 
             // 状态与操作分离：提案状态只做展示（更新日期为徽章内小按钮），操作区只保留动作
             const isRec = rec && (rec.status === '已推荐' || rec.status === '提案済');
@@ -6484,11 +6846,11 @@
               ${r.items.map(x => `
                 <tr>
                   <td data-label="評価項目"><span>${esc(x.label)}${x.flag ? ' <span class="chip warn">年数要確認</span>' : ''}</span></td>
-                  <td data-label="技術者スキル" class="num">${x.tech}</td>
-                  <td data-label="案件要件" class="num">${x.req}</td>
-                  <td data-label="個別スコア" class="r">${x.s.toFixed(2)}</td>
+                  <td data-label="技術者スキル" class="num">${esc(x.tech)}</td>
+                  <td data-label="案件要件" class="num">${esc(x.req)}</td>
+                  <td data-label="個別スコア" class="r">${x.s == null ? '<span class="chip warn sm">対象外</span>' : x.s.toFixed(2)}</td>
                   <td data-label="重み" class="r">${x.w}</td>
-                  <td data-label="貢献度" class="r">${f1(x.contrib)}</td>
+                  <td data-label="貢献度" class="r">${x.s == null ? '—' : f1(x.contrib)}</td>
                 </tr>
               `).join('')}
               <tr>
@@ -7430,6 +7792,129 @@
            .xlsx バイナリローカル解凍読込 + 人手による確認フロー
            ============================================================================ */
 
+        /* ---------- 取込プレビュー：技能一覧の整理（チップ優先・編集切替可） ----------
+           自動認識済み（職歴から年数算出済み）の技能は読み取り専用チップで表示し、
+           編集が必要な時だけ行入力モードへ切り替える。要確認技能は常に編集行で表示。 */
+
+        /**
+         * 将当前 DOM 中的技能输入行值回写到解析数据 S.imp.data
+         * 在局部重渲染或保存前调用，避免切换显示模式时丢失已编辑内容
+         */
+        function syncImpSkillInputs() {
+            if (!S.imp?.data) return;
+            $$('[data-sk]').forEach(r => {
+                const arr = S.imp.data.skills[+r.dataset.sk];
+                if (!arr) return;
+                const ins = r.querySelectorAll('input');
+                if (ins[0]) arr[0] = ins[0].value.trim();
+                if (ins[1] && ins[1].value !== '') {
+                    arr[1] = ins[1].value;
+                    // 补填年数后状态位同步为已算出，保证分组/统计一致
+                    if (arr[2] === '要確認' || arr[2] === '待核对') arr[2] = '確認済';
+                } else if (ins[1]) arr[1] = ins[1].value;
+            });
+        }
+
+        /**
+         * 计算导入技能的两组分类
+         * 要確認：職歴に記載がなく年数を算出できない（Excel 无实绩年数记载）
+         * 分组只看年数有无：编辑模式下补填年数的技能会自动移入自動認識済み组
+         * @returns {{ skillList: Array, need: number[], auto: number[] }}
+         */
+        function impSkillGroups() {
+            const skillList = S.imp?.data?.skills || [];
+            const need = [], auto = [];
+            skillList.forEach((s, i) => {
+                if (s[1] == null || s[1] === '' || !(+s[1] > 0)) need.push(i);
+                else auto.push(i);
+            });
+            return { skillList, need, auto };
+        }
+
+        /**
+         * 单条技能编辑行（要確認 highlighted / 職歴算出 regular）
+         * @param {number} i 技能在解析数据中的下标
+         * @param {boolean} need 是否为要確認行
+         */
+        function impSkillRowHTML(i, need) {
+            const s = S.imp.data.skills[i];
+            const note = need ? '職歴に記載なし' : '職歴から算出';
+            return `
+          <div class="pf-row imp-skill-row ${need ? 'q' : ''}" data-sk="${i}">
+            <input class="field" value="${esc(s[0])}" aria-label="スキル名">
+            <input class="field num" type="number" step="0.1" min="0" value="${s[1] ?? ''}" placeholder="年数" aria-label="経験年数">
+            <small title="${esc(s[3] || '')}">${esc(note)}</small>
+          </div>`;
+        }
+
+        /**
+         * 自動認識済み技能的只读チップ（chip）群
+         * @param {number[]} auto 自動認識済み技能下标列表
+         */
+        function impSkillChipsHTML(auto) {
+            return auto.map(i => {
+                const s = S.imp.data.skills[i];
+                return `<span class="skchip" title="${esc(s[3] || '')}">${esc(s[0])} <b class="num">${esc(String(s[1]))}年</b></span>`;
+            }).join('');
+        }
+
+        /** 技能确认区整体（分組見出し + 要確認チップ/編集行 + 自動認識済みチップ/編集行） */
+        function impSkillAreaHTML() {
+            const { skillList, need, auto } = impSkillGroups();
+            const editNeed = !!S.imp.skillEditNeed;
+            const editAuto = !!S.imp.skillEdit;
+            // 要確認チップ：年数未入力は warn 強調で示す
+            const needChips = need.map(i => {
+                const s = S.imp.data.skills[i];
+                return `<span class="skchip q" title="${esc(s[3] || '')}">${esc(s[0])} <b class="num">年数要確認</b></span>`;
+            }).join('');
+            return `
+        <div class="imp-skill-head">
+          <b>スキル・実務経験年数の確認</b>
+          <span class="faint sm">全 ${skillList.length} 件</span>
+        </div>
+        ${need.length ? (editNeed ? `
+          <div class="imp-group-head">
+            <b>要確認（編集中）</b>
+            <span class="chip warn sm">${need.length}</span>
+            <span class="faint sm">年数が分かるものだけ入力してください。空欄のまま登録すると「経験あり・年数要確認」の普通技能として扱われ、加点評価の対象外（必須条件では要確認）になります。</span>
+            <button class="btn sm gr-btn" data-act="impSkillEdit" data-g="need">読み取り表示へ戻る</button>
+          </div>
+          ${need.map(i => impSkillRowHTML(i, true)).join('')}
+        ` : `
+          <div class="imp-group-head">
+            <b>要確認</b>
+            <span class="chip warn sm">${need.length}</span>
+            <span class="faint sm">職歴に記載がなく年数を算出できません。登録先では「経験あり・年数要確認」の普通技能扱いです。</span>
+            <button class="btn sm gr-btn" data-act="impSkillEdit" data-g="need">年数を入力</button>
+          </div>
+          <div class="imp-chipwall">${needChips}</div>
+        `) : ''}
+        ${auto.length ? (editAuto ? `
+          <div class="imp-group-head">
+            <b>自動認識済み（編集中）</b>
+            <span class="chip ok sm">${auto.length}</span>
+            <button class="btn sm gr-btn" data-act="impSkillEdit" data-g="auto">読み取り表示へ戻る</button>
+          </div>
+          ${auto.map(i => impSkillRowHTML(i, false)).join('')}
+        ` : `
+          <div class="imp-group-head">
+            <b>自動認識済み</b>
+            <span class="chip ok sm">${auto.length}</span>
+            <span class="faint sm">職歴から算出済み</span>
+            <button class="btn sm gr-btn" data-act="impSkillEdit" data-g="auto">年数を編集</button>
+          </div>
+          <div class="imp-chipwall">${impSkillChipsHTML(auto)}</div>
+        `) : ''}
+      `;
+        }
+
+        /** 仅重绘进入时区（局部刷新，不影响姓名/JLPT 等输入内容） */
+        function renderImpSkillArea() {
+            const el = $('#impSkillArea');
+            if (el) el.innerHTML = impSkillAreaHTML();
+        }
+
         function vImport() {
             const st = S.imp.step;
             const steps = ['ファイル選択', 'プレビュー・確認', '登録完了'].map((l, i) =>
@@ -7457,13 +7942,23 @@
             } else if (st === 2) {
                 const p = S.imp.data;
                 const dup = S.techs.some(t => t.sourceFileName === S.imp.file);
+                // 分组统计：要確認行直接可编辑；自動認識済み以只读チップ展示，可切换编辑
+                const groups = impSkillGroups();
+                const skillList = groups.skillList;
+                const needSkillIdx = groups.need;
+                const projectCount = p.projects?.length || 0;
                 body = `
       ${dup ? `<div class="callout">${ico('info')}<span>同名のスキルシート「${esc(S.imp.file)}」から登録された技術者が既に存在します。このまま保存すると新規データとして追加されます（自動上書きはされません）。</span></div>` : ''}
+      <div class="imp-summary" aria-label="取込内容の集計">
+        <div class="imp-stat"><span>抽出スキル</span><b class="num">${skillList.length}</b></div>
+        <div class="imp-stat ${needSkillIdx.length ? 'warn' : ''}"><span>要確認</span><b class="num">${needSkillIdx.length}</b></div>
+        <div class="imp-stat"><span>職務経歴</span><b class="num">${projectCount}</b></div>
+      </div>
       <div class="pf">
         <section class="panel">
           <div class="panel-h">
             <h2>抽出プレビュー</h2>
-            <span class="chip warn">ハイライト項目は要確認</span>
+            <span class="chip ${needSkillIdx.length ? 'warn' : 'ok'}">${needSkillIdx.length ? 'ハイライト項目は要確認' : '全項目 確認済み'}</span>
           </div>
           <div class="panel-b" id="pf">
             <div class="pf-row">
@@ -7487,14 +7982,8 @@
                 <small>${p.q?.biz || '会話力・実務コミュニケーション力を確認してください'}</small>
               </div>
             </div>
-            <div style="padding:14px 0 4px"><b>スキル・実務経験年数の確認</b></div>
-            ${p.skills.map((s, i) => `
-              <div class="pf-row ${s[2] === '待核对' || s[2] === '要確認' ? 'q' : ''}" data-sk="${i}">
-                <input class="field" value="${esc(s[0])}">
-                <input class="field num" type="number" step="0.1" min="0" value="${s[1] ?? ''}" placeholder="年数">
-                <small>${esc(s[3] === '导入提取' || s[3] === '取込抽出' ? '取込抽出' : (s[3] || '取込抽出'))}</small>
-              </div>
-            `).join('')}
+            <!-- 技能确认区：要確認编辑行 + 自動認識済みチップ墙，局部可切换编辑模式 -->
+            <div id="impSkillArea">${impSkillAreaHTML()}</div>
           </div>
         </section>
         <aside class="stack">
@@ -7514,27 +8003,36 @@
               <span class="muted sm">性別・国籍・居住地などの基本情報は個人プロフィールとして保存されます。マッチング判定とスコアリングでは主にスキル実務年数と日本語力を対象とします。</span>
             </div>
           </div>
-          <div class="btn-row">
+          <div class="btn-row imp-actions-inline">
             <button class="btn" data-act="impBack">ファイル再選択</button>
             <button class="btn primary" data-act="impSave">確認して技術者を登録</button>
           </div>
         </aside>
       </div>
 
-      ${p.projects?.length ? `
-        <section class="panel" style="margin-top:20px">
-          <div class="panel-h" style="padding-bottom:14px">
-            <div style="display:flex;align-items:center;gap:10px">
+      ${projectCount ? `
+        <details class="panel imp-proj-panel" style="margin-top:20px">
+          <summary>
+            <span class="imp-proj-title">
               <h2>抽出された職歴・プロジェクト経歴</h2>
-              <span class="chip ok sm">${p.projects.length}件の経歴</span>
-            </div>
-            <span class="faint sm">登録後は技術者詳細画面でいつでも確認できます</span>
-          </div>
+              <span class="chip ok sm">${projectCount}件</span>
+            </span>
+            <span class="faint sm">登録後も技術者詳細で確認できます ${ico('chevronDown', 1.7, 'imp-chev')}</span>
+          </summary>
           <div class="panel-b" style="padding-top:0">
             ${renderFullProfile(p)}
           </div>
-        </section>
+        </details>
       ` : ''}
+      <div class="imp-mobile-actions">
+        <div class="imp-mobile-meta">
+          <b class="${needSkillIdx.length ? 'warn' : ''}">${needSkillIdx.length ? `要確認 ${needSkillIdx.length}件` : '全件確認済み'}</b>
+          <small>スキル ${skillList.length} · 経歴 ${projectCount}</small>
+        </div>
+        <button class="btn sm" data-act="impBack">戻る</button>
+        <button class="btn primary sm" data-act="impSave">登録する</button>
+      </div>
+      <div class="imp-mobile-spacer" aria-hidden="true"></div>
     `;
             } else if (st === 3) {
                 body = `
@@ -7980,12 +8478,19 @@
                 S.imp = { step: 1, file: null, data: null };
                 vImport();
             },
+            /** 技能チップ表示 ⇔ 編集行 表示切替（data-g="need"/"auto" 分组独立切换；同页局部重绘，不丢已改内容） */
+            impSkillEdit(el) {
+                if (!S.imp?.data) return;
+                syncImpSkillInputs();
+                if (el && el.dataset.g === 'need') S.imp.skillEditNeed = !S.imp.skillEditNeed;
+                else S.imp.skillEdit = !S.imp.skillEdit;
+                renderImpSkillArea();
+            },
             impSave() {
                 const p = S.imp.data;
-                const rows = $$('[data-sk]').map(r => {
-                    const i = $$('input', r);
-                    return { n: i[0].value.trim(), y: i[1].value };
-                }).filter(r => r.n);
+                // 将页面中姓名旁的技能行输入（要確認行 + 编辑模式行）回写到解析数据，
+                // 再统一从解析数据生成技能列表：年数空 = 「経験あり・年数要確認」的普通技能
+                syncImpSkillInputs();
 
                 const name = $('#pfName').value.trim();
                 if (!name) { toast('技術者氏名を入力してください'); return; }
@@ -8007,10 +8512,10 @@
                     management: p.management || null,
                     certifications: p.certifications || [],
                     projects: p.projects || [],
-                    skills: rows.map(r => ({
-                        name: r.n,
-                        years: r.y === '' ? 0 : +r.y,
-                        source: r.y === '' ? '要確認' : '取込抽出',
+                    skills: (p.skills || []).filter(s => s[0]).map(s => ({
+                        name: s[0],
+                        years: (s[1] === '' || s[1] == null) ? 0 : +s[1],
+                        source: (s[1] === '' || s[1] == null) ? '要確認' : '取込抽出',
                         note: ''
                     })),
                     jlpt: $('#pfJ').value,
