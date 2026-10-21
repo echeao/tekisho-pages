@@ -4969,6 +4969,297 @@
             }
         }
 
+        /* ==========================================================================
+       案件テキスト自動入力（貼り付け → 解析 → 確認）
+       原文ハイライトは 6 分類。色は currentColor を経由してテーマに自動追従する。
+       ========================================================================== */
+        :root {
+            --pc-skill: #2F5FD0;
+            --pc-req: #1F7A57;
+            --pc-time: #A9741A;
+            --pc-place: #6B4BC4;
+            --pc-money: #A63A6B;
+            --pc-jp: #1F6E8C;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root:not([data-theme="light"]) {
+                --pc-skill: #8FB0FF;
+                --pc-req: #6FD6A6;
+                --pc-time: #F0B35E;
+                --pc-place: #B9A2FF;
+                --pc-money: #F2A0C0;
+                --pc-jp: #7BCFE0;
+            }
+        }
+
+        :root[data-theme="dark"] {
+            --pc-skill: #8FB0FF;
+            --pc-req: #6FD6A6;
+            --pc-time: #F0B35E;
+            --pc-place: #B9A2FF;
+            --pc-money: #F2A0C0;
+            --pc-jp: #7BCFE0;
+        }
+
+        .pc-sec {
+            display: grid;
+            gap: 10px;
+        }
+
+        .pc-sec-h {
+            display: flex;
+            align-items: baseline;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .pc-ta {
+            width: 100%;
+            min-height: 132px;
+            resize: vertical;
+            font-family: var(--body);
+            font-size: 13px;
+            line-height: 1.8;
+        }
+
+        /* 解析後の原文（折りたたみ・再編集用） */
+        .pc-src {
+            border: 1px solid var(--line);
+            border-radius: 10px;
+            padding: 0 12px;
+            background: var(--surface2);
+        }
+
+        .pc-src>summary {
+            cursor: pointer;
+            padding: 9px 0;
+            font-size: 12.5px;
+            color: var(--ink2);
+        }
+
+        .pc-src[open]>summary {
+            border-bottom: 1px solid var(--line);
+            margin-bottom: 10px;
+        }
+
+        .pc-src .pc-ta {
+            min-height: 96px;
+            margin-bottom: 10px;
+        }
+
+        /* 原文ハイライト（スパンのネストに対応） */
+        .pc-hl {
+            white-space: pre-wrap;
+            overflow-wrap: anywhere;
+            font-size: 12.5px;
+            line-height: 1.95;
+            border: 1px solid var(--line);
+            border-radius: 10px;
+            padding: 10px 12px;
+            background: var(--surface2);
+            max-height: 210px;
+            overflow: auto;
+        }
+
+        .pc-hl mark {
+            background: color-mix(in srgb, currentColor 14%, transparent);
+            border-bottom: 2px solid currentColor;
+            border-radius: 3px;
+            padding: 0 1px;
+            font-weight: 600;
+        }
+
+        .pc-hl mark.g-skill {
+            color: var(--pc-skill);
+        }
+
+        .pc-hl mark.g-req {
+            color: var(--pc-req);
+        }
+
+        .pc-hl mark.g-time {
+            color: var(--pc-time);
+        }
+
+        .pc-hl mark.g-place {
+            color: var(--pc-place);
+        }
+
+        .pc-hl mark.g-money {
+            color: var(--pc-money);
+        }
+
+        .pc-hl mark.g-jp {
+            color: var(--pc-jp);
+        }
+
+        .pc-legend {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            font-size: 11.5px;
+            color: var(--ink3);
+        }
+
+        .pc-legend span {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .pc-legend i {
+            width: 8px;
+            height: 8px;
+            border-radius: 2px;
+            background: currentColor;
+        }
+
+        /* 抽出結果のフィールドカード */
+        .pc-fields {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 8px;
+        }
+
+        .pc-f {
+            display: flex;
+            align-items: baseline;
+            gap: 8px;
+            min-width: 0;
+            font-size: 12.5px;
+            border: 1px solid var(--line);
+            border-radius: 9px;
+            padding: 7px 10px;
+            background: var(--surface);
+        }
+
+        .pc-fk {
+            flex: none;
+            min-width: 54px;
+            font-size: 11.5px;
+            color: var(--ink3);
+        }
+
+        .pc-fv {
+            color: var(--ink);
+            overflow-wrap: anywhere;
+        }
+
+        .pc-fv.miss {
+            color: var(--ink3);
+        }
+
+        .pc-dot {
+            flex: none;
+            align-self: center;
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+        }
+
+        .pc-dot.hi {
+            background: var(--ok);
+        }
+
+        .pc-dot.mid {
+            background: var(--warn);
+        }
+
+        .pc-dot.low {
+            background: var(--bad);
+        }
+
+        .pc-dot.none {
+            background: transparent;
+        }
+
+        .pc-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+
+        .pc-warns {
+            display: grid;
+            gap: 6px;
+        }
+
+        .pc-w {
+            display: flex;
+            gap: 8px;
+            font-size: 12.5px;
+            line-height: 1.6;
+            padding: 7px 10px;
+            border-radius: 9px;
+            background: var(--warn-soft);
+            color: var(--warn);
+        }
+
+        .pc-w.bad {
+            background: var(--bad-soft);
+            color: var(--bad);
+        }
+
+        .pc-w.info {
+            background: var(--accent-soft);
+            color: var(--accent);
+        }
+
+        .pc-w svg {
+            width: 14px;
+            height: 14px;
+            flex: none;
+            margin-top: 3px;
+        }
+
+        .pc-unknown {
+            cursor: pointer;
+            border: 1px dashed var(--line);
+        }
+
+        .pc-unknown:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+
+        /* 案件フォーム内の「抽出メタ情報」（読み取り専用） */
+        .pc-meta {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 6px 14px;
+            font-size: 12.5px;
+            border: 1px solid var(--line);
+            border-radius: 10px;
+            padding: 10px 12px;
+            background: var(--surface2);
+        }
+
+        .pc-meta div {
+            display: flex;
+            gap: 8px;
+            min-width: 0;
+        }
+
+        .pc-meta b {
+            flex: none;
+            min-width: 52px;
+            font-weight: 500;
+            color: var(--ink3);
+            font-size: 11.5px;
+        }
+
+        .pc-meta span {
+            overflow-wrap: anywhere;
+        }
+
+        @media (max-width: 640px) {
+            .pc-fields,
+            .pc-meta {
+                grid-template-columns: 1fr;
+            }
+        }
+
         @media (prefers-reduced-motion: reduce) {
             * {
                 transition: none !important;
@@ -5014,6 +5305,1059 @@
     <!-- 未保存内容确认弹窗 -->
     <div class="modal-overlay" id="confirmModal" aria-hidden="true"></div>
     <div class="toast" id="toast" role="status"></div>
+
+    <!-- ===== BEGIN: case-parser (synced from prototype/case-parser.js) ===== -->
+    <script>
+/* ============================================================================
+ * TechCaseParser — 案件テキスト自動解析エンジン（プロトタイプ v0.1）
+ * ----------------------------------------------------------------------------
+ * 目的：業務側が営業メール／DM からコピペした「案件情報の生テキスト」を、
+ *       本アプリの案件モデル（skillConditions / jlptRequirement / startDate …）へ
+ *       半自動で落とし込むためのゼロ依存パーサ。
+ *
+ * 設計方針（本アプリの既存思想に合わせる）：
+ *   1. 完全自動化しない。抽出結果には必ず「根拠（原文スパン）」と「信頼度」を付け、
+ *      低信頼の項目は要確認として人間に返す（= 既存の「要確認 / 年数未確認」と同じ思想）。
+ *   2. 形態素解析ライブラリを積まない。日本語の分かち書きは
+ *      「辞書最長一致 + 正規表現 + Intl.Segmenter（ブラウザ標準）」で代替する。
+ *   3. 原文との座標対応を壊さない。全角→半角の正規化は 1 文字 = 1 文字で行い、
+ *      抽出したスパンをそのまま原文ハイライトに使えるようにする。
+ *   4. 出力は既存 case モデルにそのまま渡せる形（+ 既存モデルに無い項目は ext に退避）。
+ *
+ * 依存：なし（Node 22 / Chrome・Edge・Safari のモダンブラウザで動作）
+ * ========================================================================== */
+(function (root, factory) {
+    if (typeof module === 'object' && module.exports) module.exports = factory();
+    else root.TechCaseParser = factory();
+})(typeof globalThis !== 'undefined' ? globalThis : this, function () {
+    'use strict';
+
+    const VERSION = '0.1.0';
+
+    /* ==========================================================================
+       1. 基礎ユーティリティ
+       ========================================================================== */
+
+    /**
+     * 全角英数記号 → 半角（長さは必ず 1:1 で保存）
+     * 正規化後もインデックスが原文と一致するため、抽出スパンをそのまま
+     * 原文ハイライトに再利用できる。
+     * @param {string} s 原文
+     * @returns {string} 半角化した文字列（同一長）
+     */
+    // 半角カタカナ → 全角カタカナ（1:1。濁点・半濁点の合成は行わない）
+    const HW_KANA_FROM = 'ｦｧｨｩｪｫｬｭｮｯｰｱｲｳｴｵｶｷｸｹｺｻｼｽｾｿﾀﾁﾂﾃﾄﾅﾆﾇﾈﾉﾊﾋﾌﾍﾎﾏﾐﾑﾒﾓﾔﾕﾖﾗﾘﾙﾚﾛﾜﾝ';
+    const HW_KANA_TO = 'ヲァィゥェォャュョッーアイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワン';
+
+    function toHalf(s) {
+        let out = '';
+        for (let i = 0; i < s.length; i++) {
+            const c = s.charCodeAt(i);
+            if (c === 0x3000) out += ' ';                        // 全角スペース
+            else if (c >= 0xFF01 && c <= 0xFF5E) out += String.fromCharCode(c - 0xFEE0); // 全角英数記号
+            else if (c >= 0xFF66 && c <= 0xFF9D) {               // 半角カタカナ
+                const k = HW_KANA_FROM.indexOf(s[i]);
+                out += k >= 0 ? HW_KANA_TO[k] : s[i];
+            } else out += s[i];
+        }
+        return out;
+    }
+
+    /** 行分割（開始オフセット付き。空行も保持して行番号を安定させる） */
+    function splitLines(s) {
+        const lines = [];
+        let start = 0;
+        for (let i = 0; i <= s.length; i++) {
+            if (i === s.length || s[i] === '\n') {
+                lines.push({ start, end: i, text: s.slice(start, i) });
+                start = i + 1;
+            }
+        }
+        return lines;
+    }
+
+    /** 行頭の装飾記号（◆■●・※【】など）を除去 */
+    function stripDeco(line) {
+        return String(line)
+            .replace(/^[\s\u2500-\u25FF\u3010\u3011\u30FB\u2022*＊\-\u2015]+/, '')
+            .replace(/[\s\u3000]+$/, '');
+    }
+
+    const pad2 = n => String(n).padStart(2, '0');
+    const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
+
+    /* ==========================================================================
+       2. スキル辞書（正規名 / カテゴリ / 表記ゆれエイリアス）
+       --------------------------------------------------------------------------
+       正規名は index.html の PRETTY_SKILL と揃え、技術者側の登録名と
+       突き合わせやすくしている（詳細は alignToVocab を参照）。
+       ========================================================================== */
+    const SKILL_DICT = [
+        // ── 言語 (lang)
+        ['Java', 'lang', ['java']],
+        ['JavaScript', 'lang', ['javascript', 'js']],
+        ['TypeScript', 'lang', ['typescript', 'ts']],
+        ['Python', 'lang', ['python']],
+        ['PHP', 'lang', ['php']],
+        ['Ruby', 'lang', ['ruby']],
+        ['Go', 'lang', ['go言語', 'golang', 'go']],
+        ['C', 'lang', ['c言語', 'c']],
+        ['C++', 'lang', ['c++', 'cpp']],
+        ['C#', 'lang', ['c#', 'csharp']],
+        ['VB.NET', 'lang', ['vb.net', 'vbnet']],
+        ['COBOL', 'lang', ['cobol']],
+        ['Swift', 'lang', ['swift']],
+        ['Kotlin', 'lang', ['kotlin']],
+        ['Scala', 'lang', ['scala']],
+        ['Perl', 'lang', ['perl']],
+        ['R言語', 'lang', ['r言語']],
+        ['Shell', 'lang', ['シェルスクリプト', 'shell', 'bash']],
+        ['SQL', 'lang', ['sql']],
+        ['PL/SQL', 'lang', ['pl/sql', 'plsql']],
+        ['HTML', 'lang', ['html5', 'html']],
+        ['CSS', 'lang', ['css3', 'css']],
+        ['Sass', 'lang', ['scss', 'sass']],
+        ['VBA', 'lang', ['vba', 'excelマクロ']],
+        ['GAS', 'lang', ['google apps script']],
+        // ── フレームワーク (fw)
+        ['Spring', 'fw', ['spring boot', 'springboot', 'spring framework', 'spring']],
+        ['Struts', 'fw', ['struts']],
+        ['.NET', 'fw', ['.net core', 'asp.net', '.net', 'dotnet']],
+        ['Django', 'fw', ['django']],
+        ['Flask', 'fw', ['flask']],
+        ['Ruby on Rails', 'fw', ['ruby on rails', 'rails']],
+        ['Laravel', 'fw', ['laravel']],
+        ['React', 'fw', ['react.js', 'reactjs', 'react']],
+        ['React Native', 'fw', ['react native', 'reactnative']],
+        ['Vue.js', 'fw', ['vue.js', 'vuejs', 'vue3', 'vue2', 'vue']],
+        ['Angular', 'fw', ['angularjs', 'angular']],
+        ['Next.js', 'fw', ['next.js', 'nextjs']],
+        ['Nuxt', 'fw', ['nuxt.js', 'nuxt']],
+        ['jQuery', 'fw', ['jquery']],
+        ['Node.js', 'fw', ['node.js', 'nodejs']],
+        ['NestJS', 'fw', ['nest.js', 'nestjs']],
+        ['Express', 'fw', ['express.js']],
+        ['GraphQL', 'fw', ['graphql']],
+        ['REST API', 'fw', ['rest api', 'restful', 'rest']],
+        ['gRPC', 'fw', ['grpc']],
+        ['Redux', 'fw', ['redux']],
+        ['Bootstrap', 'fw', ['bootstrap']],
+        ['Tailwind', 'fw', ['tailwind']],
+        ['TensorFlow', 'fw', ['tensorflow']],
+        ['PyTorch', 'fw', ['pytorch']],
+        ['OpenCV', 'fw', ['opencv']],
+        // ── データベース (db)
+        ['Oracle', 'db', ['oracle']],
+        ['MySQL', 'db', ['mysql']],
+        ['PostgreSQL', 'db', ['postgresql', 'postgres']],
+        ['SQL Server', 'db', ['sql server', 'sqlserver']],
+        ['DB2', 'db', ['db2']],
+        ['MongoDB', 'db', ['mongodb', 'mongo']],
+        ['Redis', 'db', ['redis']],
+        ['BigQuery', 'db', ['bigquery']],
+        ['DynamoDB', 'db', ['dynamodb']],
+        ['Hadoop', 'db', ['hadoop']],
+        ['Spark', 'db', ['apache spark', 'spark']],
+        // ── クラウド / 基盤 (cloud)
+        ['AWS', 'cloud', ['aws']],
+        ['Azure', 'cloud', ['azure']],
+        ['GCP', 'cloud', ['gcp', 'google cloud']],
+        ['Docker', 'cloud', ['docker']],
+        ['Kubernetes', 'cloud', ['kubernetes', 'k8s']],
+        ['Terraform', 'cloud', ['terraform']],
+        ['Ansible', 'cloud', ['ansible']],
+        ['Jenkins', 'cloud', ['jenkins']],
+        ['Git', 'tool', ['gitlab', 'github', 'git']],
+        ['Linux', 'cloud', ['linux']],
+        ['Unix', 'cloud', ['unix']],
+        ['Nginx', 'cloud', ['nginx']],
+        ['Apache', 'cloud', ['apache']],
+        ['Tomcat', 'cloud', ['tomcat']],
+        ['Kafka', 'cloud', ['kafka']],
+        ['Power BI', 'tool', ['power bi', 'powerbi']],
+        ['Salesforce', 'tool', ['salesforce']],
+        ['SAP', 'tool', ['sap']],
+        ['ServiceNow', 'tool', ['servicenow']],
+        ['Figma', 'tool', ['figma']],
+        ['Android', 'tool', ['android']],
+        ['iOS', 'tool', ['ios']],
+        ['Flutter', 'tool', ['flutter']],
+        ['Unity', 'tool', ['unity']],
+        ['VMware', 'cloud', ['vmware']],
+        // ── 工程 (phase)：スコア対象外だが要件理解に必要
+        ['要件定義', 'phase', ['要件定義']],
+        ['基本設計', 'phase', ['基本設計']],
+        ['詳細設計', 'phase', ['詳細設計']],
+        ['製造', 'phase', ['製造']],
+        ['単体テスト', 'phase', ['単体テスト']],
+        ['結合テスト', 'phase', ['結合テスト']],
+        ['総合テスト', 'phase', ['総合テスト', '総合試験']],
+        ['運用保守', 'phase', ['運用保守', '保守運用']],
+        ['障害対応', 'phase', ['障害対応', '障害調査']],
+        ['技術調査', 'phase', ['技術調査']],
+        ['デプロイ', 'phase', ['デプロイ', 'リリース作業']],
+        ['CI/CD', 'phase', ['ci/cd', 'cicd']],
+        ['コードレビュー', 'phase', ['コードレビュー']],
+        ['上流工程', 'phase', ['上流工程']],
+        ['下流工程', 'phase', ['下流工程']],
+        ['性能改善', 'phase', ['性能改善', 'チューニング']],
+        ['データ移行', 'phase', ['データ移行', 'マイグレーション']],
+        // ── ドメイン (domain)
+        ['金融', 'domain', ['金融']],
+        ['保険', 'domain', ['保険']],
+        ['会計', 'domain', ['会計']],
+        ['物流', 'domain', ['物流']],
+        ['生産管理', 'domain', ['生産管理']],
+        ['販売管理', 'domain', ['販売管理']],
+        ['ECサイト', 'domain', ['ecサイト', 'eコマース']],
+        ['CRM', 'domain', ['crm']],
+        ['SFA', 'domain', ['sfa']],
+        ['基幹系', 'domain', ['基幹系', '基幹システム']],
+        ['医療', 'domain', ['医療']],
+        ['公共', 'domain', ['公共']],
+        ['組み込み', 'domain', ['組み込み', '組込']]
+    ];
+
+    /** エイリアスを長い順に並べた索引（最長一致のため） */
+    const ALIAS_INDEX = (function () {
+        const arr = [];
+        SKILL_DICT.forEach(([name, cat, aliases]) =>
+            aliases.forEach(a => arr.push({ alias: a, name, cat })));
+        arr.sort((x, y) => y.alias.length - x.alias.length);
+        return arr;
+    })();
+
+    /* ==========================================================================
+       3. スキル抽出（辞書最長一致 + ラテン語境界判定）
+       ========================================================================== */
+
+    const ALNUM = /[a-z0-9]/;
+
+    /**
+     * ラテン語エイリアスの誤検出防止
+     * 例："Go" が "Google" に、"C" が "C++" に、"Java" が "JavaScript" に
+     * 食い込むのを防ぐ。日本語文字は境界制約なし（"Java開発" は OK）。
+     */
+    function boundaryOk(low, i, end, alias) {
+        const prev = i > 0 ? low[i - 1] : '';
+        const next = end < low.length ? low[end] : '';
+        if (ALNUM.test(alias[0]) && prev && /[a-z0-9_+#.]/.test(prev)) return false;
+        if (ALNUM.test(alias[alias.length - 1]) && next && /[a-z0-9_+#.]/.test(next)) return false;
+        if (alias === 'c' && (next === '+' || next === '#')) return false;
+        // 2 文字以下のラテン語は日本語に紛れやすいので追加で締める
+        if (alias === 'go' && next && /[a-z]/.test(next)) return false;
+        if (alias === 'ts' || alias === 'js') {
+            // TS は タイムシート の略でも使われるため前後が英字なら除外
+            if (prev && /[a-z]/.test(prev)) return false;
+        }
+        return true;
+    }
+
+    /**
+     * 辞書スキャン：同一スパンの重複は「長い別名」を優先
+     * @returns {Array<{start:number,end:number,raw:string,name:string,cat:string,alias:string}>}
+     */
+    function scanSkills(low, raw) {
+        const hits = [];
+        const taken = new Uint8Array(low.length);
+        for (const item of ALIAS_INDEX) {
+            let from = 0;
+            for (;;) {
+                const i = low.indexOf(item.alias, from);
+                if (i < 0) break;
+                from = i + 1;
+                const end = i + item.alias.length;
+                let blocked = false;
+                for (let k = i; k < end; k++) if (taken[k]) { blocked = true; break; }
+                if (blocked) continue;
+                if (!boundaryOk(low, i, end, item.alias)) continue;
+                for (let k = i; k < end; k++) taken[k] = 1;
+                hits.push({
+                    start: i, end,
+                    raw: raw.slice(i, end),
+                    name: item.name, cat: item.cat, alias: item.alias
+                });
+            }
+        }
+        return hits.sort((a, b) => a.start - b.start);
+    }
+
+    /* ==========================================================================
+       4. セクション判定（必須 / 尚可 / 備考 / 日本語 / 単価）
+       --------------------------------------------------------------------------
+       案件テキストは「◆必須」「【尚可】」「【備考】」などの見出しで
+       ブロック化されていることが多い。見出しは後続行に伝播させる。
+       ========================================================================== */
+    const SEC_RULES = [
+        ['must', /^(必須|必須要件|必須スキル|必須条件|必要スキル|求めるスキル|スキル要件|要求|要求スキル|required|must|マスト|必备|必需)/i],
+        ['want', /^(尚可|歓迎|希望|任意|あれば|歓迎スキル|want|nice to have|プラス|加点|ベター)/i],
+        ['note', /^(備\s*考|その他|特記事項|勤務条件|応募条件|案件概要|概要|条件|補足)/],
+        ['jp', /^(日本語|語学|言語要件)/],
+        ['money', /^(単価|予算|金額|費用|月額)/]
+    ];
+
+    /** 行ごとのセクションラベルを返す（見出し行自体も同じラベルを持つ） */
+    function labelSections(lines) {
+        let cur = 'body';
+        return lines.map(ln => {
+            const t = stripDeco(toHalf(ln.text)).trim();
+            if (!t) return { ...ln, sec: cur, head: false };
+            for (const [sec, re] of SEC_RULES) {
+                if (re.test(t)) {
+                    cur = sec;
+                    return { ...ln, sec, head: true };
+                }
+            }
+            return { ...ln, sec: cur, head: false };
+        });
+    }
+
+    /* ==========================================================================
+       5. フィールド抽出器
+       --------------------------------------------------------------------------
+       各抽出器は「原文スパン」を claim して記録する。claim 済みの領域は
+       後段の「未認識語」抽出から除外され、ハイライトの重なりも防げる。
+       ========================================================================== */
+
+    /**
+     * 抽出スパンを記録し、原文位置を消費済みにする
+     * @param {Uint8Array} used 消費済みフラグ（原文長）
+     * @param {Array} spans スパン配列
+     */
+    function claim(used, spans, start, end, kind, label, conf) {
+        if (start == null || start < 0 || end <= start) return;
+        for (let i = start; i < end && i < used.length; i++) used[i] = 1;
+        spans.push({ start, end, kind, label, conf: conf == null ? 0.8 : conf });
+    }
+
+    /** 指定範囲が既に他項目で消費済みか（誤検出の二重取りを防ぐ） */
+    function overlapsUsed(used, start, end) {
+        for (let i = start; i < end; i++) if (used[i]) return true;
+        return false;
+    }
+
+    /**
+     * 数値一致の境界チェック付きマッチ
+     * 「6.5年」の "5年" を期間として拾ってしまう事故を防ぐ
+     */
+    function safeNumMatch(low, re) {
+        const m = low.match(re);
+        if (!m) return null;
+        const before = m.index > 0 ? low[m.index - 1] : '';
+        const after = low[m.index + m[0].length] || '';
+        if (/[0-9.]/.test(before) || /[0-9.]/.test(after)) return null;
+        return m;
+    }
+
+    /**
+     * 稼働開始時期・期間
+     * 対応表記：2026年11月 / 11月〜 / 11/1 / 即日 / 随時 / 11月～中長期
+     */
+    function extractPeriod(low, base, used, spans) {
+        const nowY = base.getFullYear(), nowM = base.getMonth() + 1;
+        // 未来の開始月は年跨ぎを補正（例：10月に「1月」→ 翌年1月）
+        const yearOf = mo => (mo < nowM ? nowY + 1 : nowY);
+        let out = null;
+
+        let m = low.match(/(20\d{2})\s*[年\/.\-]\s*(\d{1,2})\s*月?/);
+        if (m) {
+            // 「11/1～2027年3月」のように範囲の“終了側”に年が付く場合がある。
+            // 直前に範囲記号があれば開始日ではなく終了日とみなして採用しない。
+            const before = low.slice(Math.max(0, m.index - 6), m.index);
+            const isRangeEnd = /[~\u301C\uFF5Eから]/.test(before);
+            if (!isRangeEnd) {
+                const mo = +m[2];
+                out = { y: +m[1], mo, conf: 0.96, text: m[0].trim() };
+            }
+        }
+        if (!out) {
+            m = low.match(/(\d{1,2})\s*月\s*(?:[~\u301C\uFF5E]|から|開始|スタート|より|\/)/);
+            if (m) {
+                const mo = +m[1];
+                out = { y: yearOf(mo), mo, conf: 0.9, text: m[0].trim() };
+            }
+        }
+        if (!out) {
+            m = low.match(/(\d{1,2})\s*\/\s*(\d{1,2})/);
+            if (m && +m[1] >= 1 && +m[1] <= 12) {
+                const mo = +m[1];
+                out = { y: yearOf(mo), mo, conf: 0.78, text: m[0].trim() };
+            }
+        }
+        if (!out) {
+            m = low.slice(0, 60).match(/(\d{1,2})\s*月/);
+            if (m) {
+                const mo = +m[1];
+                if (mo >= 1 && mo <= 12) out = { y: yearOf(mo), mo, conf: 0.72, text: m[0].trim() };
+            }
+        }
+        if (out && out.mo >= 1 && out.mo <= 12) {
+            // 募集中案件は未来前提。原文の年月が過去なら翌年と解釈し、信頼度を下げる
+            const cand = new Date(out.y, out.mo - 1, 1);
+            const baseMonth = new Date(base.getFullYear(), base.getMonth(), 1);
+            if (cand < baseMonth) {
+                out.y += 1;
+                out.rolled = true;
+                out.conf = Math.min(out.conf, 0.72);
+            }
+            const startDate = `${out.y}-${pad2(out.mo)}-01`;
+            claim(used, spans, low.indexOf(out.text), low.indexOf(out.text) + out.text.length, 'period', '開始時期', out.conf);
+            return { startDate, startText: `${out.y}年${out.mo}月`, conf: out.conf, rolled: !!out.rolled, rawText: out.text };
+        }
+        // 即日 / 随時 / 相談
+        const im = low.match(/(即日|随時|いつからでも|初月|翌月|来月|今月)/);
+        if (im) {
+            const now = new Date(base.getTime());
+            let y = now.getFullYear(), mo = now.getMonth() + 1;
+            if (im[1] === '翌月' || im[1] === '来月') { mo++; if (mo > 12) { mo = 1; y++; } }
+            claim(used, spans, im.index, im.index + im[0].length, 'period', '開始時期', im[1] === '即日' ? 0.9 : 0.7);
+            return { startDate: `${y}-${pad2(mo)}-01`, startText: im[1], conf: im[1] === '即日' ? 0.9 : 0.7 };
+        }
+        return { startDate: '', startText: '', conf: 0 };
+    }
+
+    /**
+     * 期間の長さ（中長期 / 6ヶ月 / 1年 など）。表示専用。
+     * 注意：「6.5年経験者」の年数は「期間」ではなく「経験年数」なので拾わない。
+     */
+    function extractDuration(low, used, spans) {
+        let m = low.match(/(中長期|長期|短期|半年)/);
+        if (!m) m = low.match(/[~\u301C]\s*(\d{1,2}(?:\.\d)?\s*年|\d{1,2}\s*[ヶか]月)/);
+        if (m && m[1]) {
+            claim(used, spans, m.index, m.index + m[0].length, 'period', '期間', 0.85);
+            return m[1].replace(/\s+/g, '');
+        }
+        if (m) {
+            claim(used, spans, m.index, m.index + m[0].length, 'period', '期間', 0.85);
+            return m[0];
+        }
+        m = low.match(/(?:契約期間|期間)\s*[:\uFF1A]?\s*([^\n]{1,14})/);
+        if (m) {
+            claim(used, spans, m.index, m.index + m[0].length, 'period', '期間', 0.8);
+            return m[1].trim();
+        }
+        m = safeNumMatch(low, /(\d{1,2})\s*[ヶか]月/);
+        if (m) {
+            claim(used, spans, m.index, m.index + m[0].length, 'period', '期間', 0.8);
+            return m[0].replace(/\s+/g, '');
+        }
+        return '';
+    }
+
+    /** 勤務地：ラベル付き ＞ 駅名 ＞ 都道府県 */
+    function extractLocation(low, used, spans) {
+        const PREFS = ['東京都', '神奈川県', '埼玉県', '千葉県', '大阪府', '京都府', '兵庫県', '愛知県',
+            '福岡県', '北海道', '宮城県', '広島県', '静岡県', '茨城県', '栃木県', '群馬県',
+            '奈良県', '岐阜県', '三重県', '石川県', '新潟県', '熊本県', '岡山県', '沖縄県'];
+
+        let m = low.match(/(?:^|\n)\s*(?:場所|勤務地|就業場所|勤務場所|現場|现场|勤務先|所在地|地点|工作地点|勤務)\s*[:：]?\s*([^\n]{2,30})/);
+        if (m) {
+            const val = m[1].trim().split(/[\s\u3000、,，\/／|]+/)[0].replace(/^[はがをにで]/, '').slice(0, 20);
+            // 「勤務地は顧客先（東京）です。」のような文章を勤務地として採用しない
+            const bad = !val || val.length > 16 || /^(は|が|を|に|で)/.test(val) || /(です|ます|ください)/.test(val);
+            if (!bad) {
+                claim(used, spans, m.index, m.index + m[0].length, 'location', '勤務地', 0.9);
+                return { value: val, conf: 0.9 };
+            }
+        }
+        m = low.match(/([\u4e00-\u9fa5\u30a1-\u30f6\u3041-\u3093a-z0-9]{2,8}駅)/);
+        if (m) {
+            claim(used, spans, m.index, m.index + m[0].length, 'location', '勤務地', 0.88);
+            return { value: m[0], conf: 0.88 };
+        }
+        const CITIES = ['東京', '川崎', '横浜', '大阪', '名古屋', '福岡', '札幌', '神戸', '京都', '品川', '新宿',
+            '渋谷', '池袋', '秋葉原', '大手町', '豊洲', '幕張', '大宮', '立川', '八王子', '天王洲'];
+        for (const p of PREFS) {
+            const i = low.indexOf(p);
+            if (i >= 0) {
+                const tail = low.slice(i, i + 14).match(/^[\u4e00-\u9fa5]{2,8}(?:市|区|町|村)/);
+                const val = tail ? p + tail[0] : p;
+                claim(used, spans, i, i + p.length, 'location', '勤務地', 0.8);
+                return { value: val, conf: 0.8 };
+            }
+        }
+        // 都道府県なしで都市名だけ書かれるケース（例：「川崎」）
+        for (const c of CITIES) {
+            const i = low.indexOf(c);
+            if (i >= 0) {
+                claim(used, spans, i, i + c.length, 'location', '勤務地', 0.65);
+                return { value: c, conf: 0.65 };
+            }
+        }
+        return { value: '', conf: 0 };
+    }
+
+    /** リモート可否（フル / 一部 / 不可） */
+    function extractRemote(low, used, spans) {
+        const RULES = [
+            [/(フルリモート|完全リモート|全リモート|リモートのみ|リモートオンリー)/, 'フルリモート', 0.93],
+            [/(リモート不可|出社必須|出社のみ|常駐必須)/, 'リモート不可', 0.9],
+            [/(一部リモート|リモート併用|リモート可|リモート有|在宅可|remote|远程|ハイブリッド)/, '一部リモート可', 0.85],
+            [/(週\s*[1-5１-５]\s*(?:日)?\s*(?:リモート|在宅))/, '一部リモート可', 0.8]
+        ];
+        for (const [re, val, conf] of RULES) {
+            const m = low.match(re);
+            if (m) {
+                claim(used, spans, m.index, m.index + m[0].length, 'remote', 'リモート', conf);
+                return { value: val, conf };
+            }
+        }
+        return { value: '', conf: 0 };
+    }
+
+    /** 通勤上限（通勤1H以内 / 通勤60分以内） */
+    function extractCommute(low, used, spans) {
+        const m = low.match(/通勤\s*([0-9.]{1,3})\s*(?:h|時間|分)/);
+        if (!m) return '';
+        let min = m[2] === '分' ? +m[1] : +m[1] * 60;
+        claim(used, spans, m.index, m.index + m[0].length, 'commute', '通勤上限', 0.8);
+        return min + '分以内';
+    }
+
+    /**
+     * 単価・予算
+     * 対応：60-65万 / 〜60万 / 単価60万 / 60万まで / 予算低 / スキル見合い
+     */
+    function extractBudget(low, used, spans) {
+        let m = low.match(/(\d{2,3})\s*(?:万|万円)?\s*[-~\u301C\uFF5E]\s*(\d{2,3})\s*万/);
+        if (m) {
+            claim(used, spans, m.index, m.index + m[0].length, 'money', '単価', 0.9);
+            return { text: `${m[1]}万〜${m[2]}万円`, level: '', conf: 0.9 };
+        }
+        m = low.match(/(?:単価|予算|月額|金額|費用|max|上限|単価|预算|单价)\D{0,8}?(\d{2,3})\s*万/);
+        if (!m) m = low.match(/(\d{2,3})\s*万(?:円)?\s*(?:まで|max|上限)/);
+        if (!m) m = low.match(/([~\u301C\uFF5E])\s*(\d{2,3})\s*万/);
+        if (m) {
+            const val = m[2] || m[1];
+            const open = /^[~\u301C\uFF5E]/.test(m[0].trim());
+            claim(used, spans, m.index, m.index + m[0].length, 'money', '単価', 0.85);
+            return { text: (open ? '〜' : '') + val + '万円', level: '', conf: 0.85 };
+        }
+        // 「予算低」「低予算」「スキル見合い」など定性表現（日本語・中国語の両表記）
+        m = low.match(/(予算\s*低|低予算|コスト重視|スキル見合い|応相談|预算\s*低|低预算|单价\s*低|价格\s*低)/);
+        if (m) {
+            claim(used, spans, m.index, m.index + m[0].length, 'money', '単価', 0.6);
+            return { text: m[0].replace(/\s+/g, ''), level: /低/.test(m[0]) ? '低' : '', conf: 0.6 };
+        }
+        return { text: '', level: '', conf: 0 };
+    }
+
+    /** 精算（無し / あり / 140-180h） */
+    function extractSettlement(low, used, spans) {
+        let m = low.match(/(\d{3})\s*[-~\u301C\uFF5E]\s*(\d{3})\s*(?:h|時間)/);
+        if (m) {
+            claim(used, spans, m.index, m.index + m[0].length, 'settle', '精算', 0.9);
+            return { value: `${m[1]}-${m[2]}h`, range: `${m[1]}-${m[2]}h`, conf: 0.9 };
+        }
+        m = low.match(/(?:\u7cbe\u7b97|\u6e05\u7b97)\s*[:\uFF1A]?\s*(無し|なし|無|不要|込み|あり|有り|有)/);
+        if (m) {
+            const v = /(無し|なし|無|不要|込み)/.test(m[1]) ? '精算なし' : '精算あり';
+            claim(used, spans, m.index, m.index + m[0].length, 'settle', '精算', 0.92);
+            return { value: v, range: '', conf: 0.92 };
+        }
+        if (/精算/.test(low)) {
+            const i = low.indexOf('精算');
+            claim(used, spans, i, i + 2, 'settle', '精算', 0.5);
+            return { value: '要確認', range: '', conf: 0.5 };
+        }
+        return { value: '', range: '', conf: 0 };
+    }
+
+    /**
+     * 日本語要件（JLPT / ビジネス日本語）
+     * 「N2以上」「日本語不問」「お客様と直接コミュニケーション」などを解釈。
+     * 「日本語シート4レベル」のような非標準表記は低信頼で返す。
+     */
+    function extractJapanese(low, used, spans) {
+        const res = { jlpt: '不問', biz: '不問', conf: 0, notes: [] };
+
+        if (/(日本語\s*不問|日本語不要|日本語\s*なし|日本語能力不問)/.test(low)) {
+            const m = low.match(/(日本語\s*不問|日本語不要|日本語\s*なし|日本語能力不問)/);
+            claim(used, spans, m.index, m.index + m[0].length, 'jp', '日本語', 0.92);
+            res.conf = 0.92;
+            return res;
+        }
+
+        // JLPT 明示
+        let m = low.match(/jlpt\s*n?\s*([1-5])/) || low.match(/\bn\s*([1-5])\s*(?:レベル|以上|相当|程度|保持|取得)?/);
+        if (!m) m = low.match(/日本語\s*(?:能力)?\s*([1-5])\s*(?:級|レベル)/);
+        if (m) {
+            res.jlpt = 'N' + m[1];
+            res.conf = 0.9;
+            claim(used, spans, m.index, m.index + m[0].length, 'jp', 'JLPT', 0.9);
+        } else {
+            // 非標準表記：「日本語シート4レベル」等 → N4 推定・要確認
+            const s = low.match(/日本語\s*シート\s*([1-5])\s*レベル/) || low.match(/シート\s*([1-5])\s*レベル/);
+            if (s) {
+                res.jlpt = 'N' + s[1];
+                res.conf = 0.45;
+                res.notes.push(`「${s[0].trim()}」は標準表記ではないため JLPT N${s[1]} と推定。要確認。`);
+                claim(used, spans, s.index, s.index + s[0].length, 'jp', 'JLPT(推定)', 0.45);
+            }
+        }
+
+        // ビジネス日本語・顧客折衝
+        const b = low.match(/(ビジネス(?:レベル|日本語)?|流暢|ネイティブ|直接コミュニケーション|お客様と直接|顧客と直接|折衝|商談)/);
+        // 「コミュニケーション必須」は顧客折衝前提と解釈。ただし断定せず信頼度を下げる
+        if (!b && /コミュニケーション\s*(?:必須|円滑|重視)|円滑なコミュニケーション/.test(low)) {
+            const c = low.match(/コミュニケーション\s*(?:必須|円滑|重視)|円滑なコミュニケーション/);
+            res.biz = 'ビジネス流暢必須';
+            res.conf = Math.max(res.conf, 0.6);
+            res.notes.push('「コミュニケーション必須」の記載からビジネス日本語要件と推定。要確認。');
+            claim(used, spans, c.index, c.index + c[0].length, 'jp', 'ビジネス日本語(推定)', 0.6);
+        }
+        if (b) {
+            res.biz = 'ビジネス流暢必須';
+            res.conf = Math.max(res.conf, 0.82);
+            claim(used, spans, b.index, b.index + b[0].length, 'jp', 'ビジネス日本語', 0.82);
+        } else if (/(日本語\s*(?:での)?\s*(?:会話|コミュニケーション)\s*(?:可能|可|レベル)|日常会話)/.test(low)) {
+            const c = low.match(/(日本語\s*(?:での)?\s*(?:会話|コミュニケーション)\s*(?:可能|可|レベル)|日常会話)/);
+            res.conf = Math.max(res.conf, 0.7);
+            claim(used, spans, c.index, c.index + c[0].length, 'jp', '日本語', 0.7);
+        }
+        return res;
+    }
+
+    /** 外国籍可否（+ 付随する日本語条件の注記） */
+    function extractNationality(low, used, spans) {
+        let m = low.match(/外国籍\s*[:\uFF1A]?\s*([^\n]{0,40})/);
+        if (m) {
+            const cond = m[1].trim();
+            let value = '可';
+            if (/(不可|不可|日本人のみ|日本国籍)/.test(m[0])) value = '不可';
+            else if (/(コミュニケーション|日本語|レベル)/.test(cond)) value = '可（日本語要件あり）';
+            claim(used, spans, m.index, m.index + m[0].length, 'nat', '外国籍', 0.85);
+            return { value, cond, conf: 0.85 };
+        }
+        m = low.match(/(日本人のみ|日本国籍のみ|外国籍不可)/);
+        if (m) {
+            claim(used, spans, m.index, m.index + m[0].length, 'nat', '外国籍', 0.9);
+            return { value: '不可', cond: m[0], conf: 0.9 };
+        }
+        return { value: '', cond: '', conf: 0 };
+    }
+
+    /** 年齢制限（現行モデル外・表示のみ） */
+    function extractAge(low, used, spans) {
+        let m = low.match(/(\d{2})\s*(?:歳|才)\s*(?:まで|以下|程度|迄)/) || low.match(/年齢\s*[:\uFF1A]?\s*(\d{2})\s*(?:歳|才)?\s*(?:まで|以下|程度)?/);
+        if (!m) return '';
+        claim(used, spans, m.index, m.index + m[0].length, 'age', '年齢', 0.85);
+        return m[0].replace(/\s+/g, '');
+    }
+
+    /** 面談回数・形式 */
+    function extractInterview(low, used, spans) {
+        let m = low.match(/面談\s*(\d|[一二三])\s*回/);
+        if (m) {
+            const n = { '一': 1, '二': 2, '三': 3 }[m[1]] || +m[1];
+            claim(used, spans, m.index, m.index + m[0].length, 'interview', '面談', 0.8);
+            return `${n}回`;
+        }
+        m = low.match(/(web面談|オンライン面談|対面面談|顔合わせ)/);
+        if (m) {
+            claim(used, spans, m.index, m.index + m[0].length, 'interview', '面談', 0.7);
+            return m[0];
+        }
+        return '';
+    }
+
+    /** 商流 */
+    function extractCommerce(low, used, spans) {
+        let m = low.match(/商流\s*[:\uFF1A]?\s*([^\s、。]{1,12})/) || low.match(/(一社|二社|三社|エンド)\s*(?:まで|直)/);
+        if (!m) return '';
+        claim(used, spans, m.index, m.index + m[0].length, 'commerce', '商流', 0.75);
+        return (m[1] || m[0]).trim();
+    }
+
+    /** ロール（PG / SE / PM など、スキルではなく職種） */
+    function extractRoles(low, used, spans) {
+        const found = [];
+        const RULES = [
+            [/フロント[\s・、]*バ.{0,2}エンド|両方経験|両方の経験|フルスタック/, 'フロント・バックエンド両方'],
+            [/\bpg\b|プログラマ/, 'PG'],
+            [/\bse\b|システムエンジニア/, 'SE'],
+            [/プロジェクトマネージャ|\bpm\b/, 'PM'],
+            [/プロジェクトリーダー|チームリーダー|リーダー|\bpl\b|\btl\b/, 'リーダー'],
+            [/フロントエンド/, 'フロントエンド'],
+            [/バックエンド/, 'バックエンド'],
+            [/インフラエンジニア/, 'インフラ'],
+            [/テストエンジニア|\bqa\b/, 'テスト/QA'],
+            [/データサイエンティスト|\bml\b|機械学習/, 'ML/DS']
+        ];
+        for (const [re, label] of RULES) {
+            const m = low.match(re);
+            if (m && !found.includes(label) && !overlapsUsed(used, m.index, m.index + m[0].length)) {
+                found.push(label);
+                claim(used, spans, m.index, m.index + m[0].length, 'role', '職種', 0.72);
+            }
+        }
+        return found;
+    }
+
+    /**
+     * 人物要件（原文由来の定性条件）
+     * スコア対象ではないが、提案時の添え言葉として価値が高い。
+     */
+    function extractPersonReqs(low, used, spans) {
+        const MAP = [
+            [/(自走|一人称|独力|主体的?に(?:進め|動)|\u81ea\u5df1\u9a71\u52a8)/, '自走できる'],
+            [/(コミュニケーション(?:能力)?(?:が)?(?:高い|良好|重視)|報連相|\u6c9f\u901a)/, 'コミュニケーション重視'],
+            [/(長期|安定|継続)/, '長期稼働希望'],
+            [/(人物面|人柄|面接重視|人物重視)/, '人物面重視'],
+            [/(\u8e0f\u5b9e|\u80af\u5e72|\u771f\u9762\u76ee|\u8aa0\u5b9f|\u8aa0\u6073)/, '真面目・堅実'],
+            [/(\u79ef\u6781|\u914d\u5408|\u5354\u8abf|\u5354\u8b72|\u30c1\u30fc\u30e0\u30ef\u30fc\u30af)/, '協調性・積極性'],
+            [/(責任感|当事者意識|オーナーシップ)/, '責任感']
+        ];
+        const out = [];
+        for (const [re, label] of MAP) {
+            const m = low.match(re);
+            if (m && !out.includes(label) && !overlapsUsed(used, m.index, m.index + m[0].length)) {
+                out.push(label);
+                claim(used, spans, m.index, m.index + m[0].length, 'person', '人物要件', 0.7);
+            }
+        }
+        return out;
+    }
+
+    /* ==========================================================================
+       6. 年数の紐付け
+       --------------------------------------------------------------------------
+       「Java5年以上」→ Java の minYears。
+       「PG 6.5年経験者」のように職種に付いた年数は「全体経験年数」として扱い、
+       個別スキルへ誤って配らない（誤配はスコアを静かに歪ませるため厳禁）。
+       ========================================================================== */
+    function attachYears(low, hit, lineEnd) {
+        const after = low.slice(hit.end, Math.min(hit.end + 12, lineEnd));
+        let m = after.match(/^[\s:：・、,，()（）【】「」]{0,2}(\d{1,2}(?:\.\d)?)\s*年/);
+        if (m) return { years: +m[1], len: m[0].length };
+        return null;
+    }
+
+    function extractTotalYears(low, used, spans) {
+        const m = low.match(/(\d{1,2}(?:\.\d)?)\s*年\s*(?:以上|程度|経験|相当|の経験|経験者)/);
+        if (!m) return null;
+        claim(used, spans, m.index, m.index + m[0].length, 'years', '経験年数', 0.7);
+        return +m[1];
+    }
+
+    /* ==========================================================================
+       7. 語彙アライメント（既存技術者スキル名への寄せ）
+       --------------------------------------------------------------------------
+       重要：index.html の evaluate() は norm(s.name) === norm(k.skillName) の
+       完全一致でしかスキルを突き合わせない。よって「Vue3」と「Vue.js」は別物。
+       既存技術者データに存在する表記へ寄せる処理が必須になる。
+       ========================================================================== */
+    function buildVocabMap(vocab) {
+        const map = Object.create(null);   // canonical → 既存表記
+        const byAlias = Object.create(null);
+        ALIAS_INDEX.forEach(x => { if (!byAlias[x.alias]) byAlias[x.alias] = x.name; });
+
+        (vocab || []).forEach(name => {
+            const key = String(name).trim().toLowerCase().replace(/[\s._-]+/g, '');
+            let canonical = null;
+            // 1) エイリアス完全一致
+            for (const item of ALIAS_INDEX) {
+                if (item.alias.replace(/[\s._-]+/g, '') === key) { canonical = item.name; break; }
+            }
+            // 2) 正規名そのものと一致
+            if (!canonical) {
+                const d = SKILL_DICT.find(([n]) => n.toLowerCase().replace(/[\s._-]+/g, '') === key);
+                if (d) canonical = d[0];
+            }
+            if (!canonical) return;
+            const prev = map[canonical];
+            // 既存表記が複数ある場合は「正規名そのもの」＞「短いもの」を優先
+            if (!prev || name === canonical) map[canonical] = name;
+            else if (prev !== canonical && String(name).length < String(prev).length) map[canonical] = name;
+        });
+        return map;
+    }
+
+    /* ==========================================================================
+       8. 未認識語の抽出（分かち書き）
+       --------------------------------------------------------------------------
+       Intl.Segmenter はブラウザ標準・ゼロ依存で日本語の語分割ができる。
+       辞書に無い語を「追加候補」として提示し、ユーザーがスキルに昇格できる。
+       ========================================================================== */
+    const STOPWORDS = new Set([
+        '案件', '募集', '現場', '作業', '対応', '可能', '経験', '以上', '程度', '方', 'レベル',
+        '必須', '尚可', '歓迎', '希望', '備考', '期間', '場所', '単価', '精算', '面談', '商流',
+        '年齢', '人数', '就業', '時間', '条件', '概要', '内容', '開発', '設計', 'テスト',
+        'エンジニア', 'スタート', '開始', '未定', '相談', '外国籍', '日本語', '直接', '顧客',
+        'お客様', '弊社', '貴社', '案件概要', '作業内容', '勤務', '東京', '大阪', '自身', '弊社',
+        // 一般名詞（スキル候補として提示すると誤操作を招くため除外）
+        '障害', '調査', '手順', '通り', '両方', '以内', '配合', '実務', 'スキル', 'ツール',
+        '実装', '運用', '保守', '改善', '提案', '資料', '状況', '環境', '認識', '理解', '意識',
+        '姿勢', '意欲', '向上', '主体性', '責任', '貢献', '参画', '稼働', '常駐', '出社', '在宅',
+        '面接', '随時', '即日', '早期', '目安', '上限', '下限', '別途', '応相談', '領域', '知見'
+    ]);
+
+    // カタカナでもスキル名ではない一般語（未認識語チップのノイズ除去用）
+    const GENERIC_KANA = new Set([
+        'アプリケーション', 'コミュニケーション', 'システム', 'サービス', 'チーム', 'メンバー',
+        'フレームワーク', 'イメージ', 'スタイル', 'バランス', 'スピード', 'アピール', 'ポイント',
+        'レベル', 'データ', 'ファイル', 'ユーザー', 'プロジェクト', 'フェーズ', 'ステータス',
+        'パフォーマンス', 'スケジュール', 'ドキュメント', 'ルール', 'フロー', 'コスト', 'ベース'
+    ]);
+
+    function segmentWords(text) {
+        if (typeof Intl !== 'undefined' && Intl.Segmenter) {
+            const seg = new Intl.Segmenter('ja', { granularity: 'word' });
+            const out = [];
+            for (const s of seg.segment(text)) if (s.isWordLike) out.push({ start: s.index, text: s.segment });
+            return out;
+        }
+        const out = [], re = /[\u4e00-\u9fa5\u30a1-\u30f6\u3041-\u3093a-zA-Z0-9]{2,}/g;
+        let m;
+        while ((m = re.exec(text))) out.push({ start: m.index, text: m[0] });
+        return out;
+    }
+
+    function extractUnknown(raw, used, limit) {
+        const seen = Object.create(null), out = [];
+        for (const w of segmentWords(raw)) {
+            const t = w.text.trim();
+            if (t.length < 2) continue;
+            if (STOPWORDS.has(t)) continue;
+            if (/^[\u3041-\u3093\u30FC]+$/.test(t)) continue;   // ひらがなのみ＝助詞・活用形
+            if (/^[\d.,%\-~]+$/.test(t)) continue;
+            // スキル名になり得る語だけ残す：英数を含む / カタカナ3字以上 / 漢字3字以上
+            // （漢字2字の一般名詞は誤操作の元なので提示しない）
+            const skillish = /[a-zA-Z]/.test(t)
+                || /^[\u30A0-\u30FF\u30FC]{3,}$/.test(t) && !GENERIC_KANA.has(t)
+                || /^[\u4E00-\u9FFF]{3,}$/.test(t);
+            if (!skillish) continue;
+            if (seen[t]) continue;
+            // 既に他項目で消費済みの領域は除外
+            let overlaps = false;
+            for (let i = w.start; i < w.start + t.length; i++) if (used[i]) { overlaps = true; break; }
+            if (overlaps) continue;
+            seen[t] = 1;
+            out.push(t);
+            if (out.length >= (limit || 12)) break;
+        }
+        return out;
+    }
+
+    /* ==========================================================================
+       9. 重み配分
+       --------------------------------------------------------------------------
+       既存 UI は「重み合計 100（任意）」を推奨しているので、必須 7 : 尚可 3 の
+       比率で自動配分し、日本語要件があれば 20 を確保する。あくまで初期値。
+       ========================================================================== */
+    function assignWeights(skills, hasJp) {
+        const must = skills.filter(s => s.isHard);
+        const want = skills.filter(s => !s.isHard);
+        const jw = hasJp ? 20 : 0;
+        const budget = 100 - jw;
+        if (must.length) {
+            const per = Math.floor(budget * (want.length ? 0.72 : 1) / must.length);
+            must.forEach(s => { s.weight = Math.max(5, per); });
+        }
+        if (want.length) {
+            const per = Math.floor(budget * (must.length ? 0.28 : 1) / want.length);
+            want.forEach(s => { s.weight = Math.max(3, per); });
+        }
+        return jw;
+    }
+
+    /* ==========================================================================
+       10. メイン API
+       ========================================================================== */
+
+    /**
+     * 案件テキストを解析する
+     * @param {string} text 貼り付けられた案件原文
+     * @param {Object} [opts]
+     * @param {Date|string} [opts.now] 基準日（開始月の年跨ぎ補正に使用）
+     * @param {string[]} [opts.vocab] 既存技術者スキル名の一覧（表記寄せ用）
+     * @returns {Object} {case, ext, skills, spans, unknown, warnings, stats}
+     */
+    function parse(text, opts) {
+        opts = opts || {};
+        const t0 = (typeof performance !== 'undefined' && performance.now) ? performance.now() : Date.now();
+        const raw = String(text == null ? '' : text);
+        const base = opts.now ? new Date(opts.now) : new Date();
+        const half = toHalf(raw);
+        const low = half.toLowerCase();
+        const lines = labelSections(splitLines(raw));
+        const used = new Uint8Array(raw.length);
+        const spans = [];
+
+        // ── 10.1 フィールド抽出
+        const period = extractPeriod(low, base, used, spans);
+        const duration = extractDuration(low, used, spans);
+        const loc = extractLocation(low, used, spans);
+        const remote = extractRemote(low, used, spans);
+        const commute = extractCommute(low, used, spans);
+        const budget = extractBudget(low, used, spans);
+        const settle = extractSettlement(low, used, spans);
+        const jp = extractJapanese(low, used, spans);
+        const nat = extractNationality(low, used, spans);
+        const age = extractAge(low, used, spans);
+        const interview = extractInterview(low, used, spans);
+        const commerce = extractCommerce(low, used, spans);
+        const roles = extractRoles(low, used, spans);
+        const personReqs = extractPersonReqs(low, used, spans);
+        const totalYears = extractTotalYears(low, used, spans);
+
+        // ── 10.2 スキル抽出（行のセクション情報を付与）
+        const hits = scanSkills(low, raw);
+        const lineOf = idx => lines.find(l => idx >= l.start && idx < l.end) || lines[lines.length - 1];
+
+        // 辞書ヒットを抽出済み領域としてマーク（原文ハイライト＋未認識語からの除外に使用）
+        hits.forEach(h => {
+            const kind = h.cat === 'phase' ? 'phase' : h.cat === 'domain' ? 'domain' : 'skill';
+            claim(used, spans, h.start, h.end, kind, h.name, 0.9);
+        });
+
+        const skillMap = Object.create(null);
+        for (const h of hits) {
+            const ln = lineOf(h.start);
+            const isPhaseOrDomain = h.cat === 'phase' || h.cat === 'domain';
+            if (isPhaseOrDomain) continue;          // 工程・ドメインは別枠で表示
+            const sec = ln.sec;
+            const isHard = sec === 'want' || sec === 'note' ? false : true;
+            const years = attachYears(low, h, ln.end);
+            const evLine = stripDeco(ln.text).slice(0, 70);
+
+            const key = h.name;
+            if (!skillMap[key]) {
+                skillMap[key] = {
+                    skillName: h.name, minYears: null, isHard, weight: 0,
+                    cat: h.cat, section: sec, evidence: evLine, evidenceLines: [evLine],
+                    yearsGuessed: false, conf: 0
+                };
+            }
+            const item = skillMap[key];
+            if (evLine && !item.evidenceLines.includes(evLine) && item.evidenceLines.length < 3) {
+                item.evidenceLines.push(evLine);
+            }
+            // 必須ブロックに一度でも登場したら必須扱い（尚可より優先）
+            if (sec === 'must') item.isHard = true;
+            if (years && !item.minYears) item.minYears = years.years;
+
+            let conf = 0.9;
+            if (sec === 'body') conf -= 0.15;      // 見出しなし＝文脈推定
+            if (sec === 'note') conf -= 0.25;
+            if (sec === 'want') conf -= 0.05;
+            if (h.name.length <= 2 || ['製造'].includes(h.name)) conf -= 0.1;
+            item.conf = Math.max(item.conf, clamp(conf, 0.3, 0.99));
+        }
+
+        // 命中年数が無い必須スキルは既定 1 年（既存バリデーション：必須は minYears>0 必須）
+        Object.values(skillMap).forEach(s => {
+            if (s.minYears == null) {
+                s.minYears = s.isHard ? 1 : 0;
+                s.yearsGuessed = true;
+            }
+        });
+
+        // 既存表記への寄せ
+        const vocabMap = buildVocabMap(opts.vocab);
+        Object.values(skillMap).forEach(s => {
+            const aligned = vocabMap[s.skillName];
+            if (aligned && aligned !== s.skillName) {
+                s.alignedFrom = s.skillName;
+                s.skillName = aligned;
+            }
+        });
+
+        const skills = Object.values(skillMap).sort((a, b) =>
+            (b.isHard - a.isHard) || b.conf - a.conf || a.skillName.localeCompare(b.skillName));
+        const jw = assignWeights(skills, jp.jlpt !== '不問' || jp.biz !== '不問');
+
+        const phases = hits.filter(h => h.cat === 'phase').map(h => h.name);
+        const domains = hits.filter(h => h.cat === 'domain').map(h => h.name);
+
+        // ── 10.3 案件モデルへ変換
+        const caseObj = {
+            title: '',
+            client: '',
+            location: loc.value,
+            unitPriceText: budget.text + (budget.level ? '（低予算）' : ''),
+            startDate: period.startDate,
+            status: '募集中',
+            skillConditions: skills.map(s => ({
+                skillName: s.skillName,
+                minYears: s.minYears,
+                isHard: !!s.isHard,
+                weight: s.weight
+            })),
+            jlptRequirement: jp.jlpt,
+            businessJapaneseRequirement: jp.biz,
+            japaneseWeight: jw
+        };
+
+        // 案件名の自動作成（空だと保存できないため）
+        const titleParts = [];
+        if (loc.value) titleParts.push(loc.value);
+        else if (period.startDate) titleParts.push(`${+period.startDate.slice(5, 7)}月〜`);
+        if (skills[0]) titleParts.push(skills[0].skillName);
+        if (skills[1]) titleParts.push(skills[1].skillName);
+        if (roles[0] && roles[0] !== 'フロント・バックエンド両方') titleParts.push(roles[0]);
+        caseObj.title = (titleParts.join('・') || '新規案件') + (duration ? `（${duration}）` : '');
+
+        // ── 10.4 警告（人間が確認すべき点）
+        const warnings = [];
+        if (!skills.length) warnings.push({ level: 'bad', text: 'スキルを 1 件も抽出できませんでした。辞書の追加が必要です。' });
+        if (!loc.value) warnings.push({ level: 'warn', text: '勤務地を特定できませんでした。' });
+        if (!period.startDate) warnings.push({ level: 'warn', text: '稼働開始時期を特定できませんでした。' });
+        if (period.rolled) warnings.push({ level: 'warn', text: `原文の「${period.rawText}」は過去の年月です。募集中案件とみなし翌年として解釈しました。要確認。` });
+        const guessed = skills.filter(s => s.yearsGuessed && s.isHard);
+        if (guessed.length) warnings.push({
+            level: 'info',
+            text: `必須スキル ${guessed.length} 件に年数の記載がないため、暫定 1 年で登録します（${guessed.map(s => s.skillName).join('、')}）。`
+        });
+        if (jp.conf && jp.conf < 0.6) warnings.push({ level: 'warn', text: '日本語要件の表記が標準的でないため、推定値です。必ず確認してください。' });
+        jp.notes.forEach(n => warnings.push({ level: 'warn', text: n }));
+        if (nat.value === '可（日本語要件あり）' && jp.biz === '不問' && jp.jlpt === '不問') {
+            warnings.push({ level: 'warn', text: '外国籍可の条件に日本語要件が紐づいていますが、日本語要件を抽出できていません。' });
+        }
+        if (settle.value === '要確認') warnings.push({ level: 'warn', text: '「精算」の記載はありますが、可否を判定できませんでした。' });
+        if (totalYears && skills.some(s => s.minYears === 1 && s.yearsGuessed)) {
+            warnings.push({ level: 'info', text: `全体経験 ${totalYears} 年が記載されています。個別スキル要件とは別物として扱いました。` });
+        }
+
+        // ── 10.5 未認識語
+        const unknown = extractUnknown(raw, used, 12);
+        const unknownRatio = raw.length ? (1 - used.reduce((a, b) => a + b, 0) / raw.length) : 0;
+        if (unknownRatio > 0.55 && skills.length) {
+            warnings.push({ level: 'info', text: `原文の約 ${Math.round(unknownRatio * 100)}% が未解釈です。未認識語から必要なものを追加してください。` });
+        }
+
+        const t1 = (typeof performance !== 'undefined' && performance.now) ? performance.now() : Date.now();
+
+        return {
+            version: VERSION,
+            case: caseObj,
+            ext: {
+                periodText: [period.startText, duration].filter(Boolean).join(' / '),
+                startConf: period.conf,
+                duration, remote: remote.value, commute,
+                settlement: settle.value, settleRange: settle.range,
+                budgetText: budget.text, budgetLevel: budget.level,
+                nationality: nat.value, nationalityCond: nat.cond,
+                jlpt: jp.jlpt, biz: jp.biz, jpConf: jp.conf,
+                ageLimit: age, interview, commerce,
+                roles, phases: [...new Set(phases)], domains: [...new Set(domains)],
+                personReqs, totalYears
+            },
+            skills, spans, unknown, warnings,
+            stats: {
+                chars: raw.length, lines: lines.length,
+                hitCount: hits.length, skillCount: skills.length,
+                ms: Math.round((t1 - t0) * 100) / 100,
+                unknownRatio: Math.round(unknownRatio * 100) / 100
+            }
+        };
+    }
+
+    return { VERSION, parse, toHalf, scanSkills, SKILL_DICT, buildVocabMap };
+});
+
+    </script>
+    <!-- ===== END: case-parser ===== -->
 
     <script>
         /**
@@ -7122,6 +8466,16 @@
         }
 
         let D = null; // 当前抽屉表单草稿数据
+        /**
+         * 案件テキスト貼り付け（自動解析）の作業状態。
+         * null = 非表示。解析結果を人が確認・修正してから案件フォームへ渡すため、
+         * 案件フォームの草稿（D）とは独立したライフサイクルで管理する。
+         * @type {null | {
+         *   step: 'input'|'confirm', text: string, parsedText: string,
+         *   result: Object, skills: Array, ext: Object
+         * }}
+         */
+        let P = null;
         const JL_OPT = ['N1', 'N2', 'N3', 'N4', 'N5', '未受験', '不明'];
         const BZ_OPT = ['ビジネス流暢', '日常会話', '簡単な会話', '不明'];
         const opts = (a, v) => a.map(x => `<option ${x === v ? 'selected' : ''}>${x}</option>`).join('');
@@ -7265,6 +8619,7 @@
             $('#scrim').classList.remove('on');
             unlockPageScroll();
             D = null;
+            P = null;
             const rf = drawerReturnFocus;
             drawerReturnFocus = null;
             // 先归还焦点再从无障碍树隐藏，避免 aria-hidden 隐藏仍持有焦点的关闭按钮
@@ -7275,6 +8630,22 @@
 
         /** 用户主动关闭抽屉：有未保存修改时先确认，避免误触丢失输入 */
         function attemptCloseDrawer() {
+            // 貼り付け解析の入力中テキストは D とは別管理なので、ここでも保護する
+            if (P && String(P.text || '').trim()) {
+                openConfirm({
+                    title: '貼り付けた内容を破棄しますか？',
+                    message: '解析・反映前のテキストは保存されません。破棄して閉じますか？',
+                    confirmText: '破棄して閉じる',
+                    cancelText: '編集を続ける',
+                    onConfirm: () => { P = null; closeDrawer(); }
+                });
+                const pd = $('#drawer');
+                if (pd && pd.classList.contains('on')) {
+                    const focusTarget = pd.querySelector('.dr-h .btn');
+                    if (focusTarget) confirmReturnFocus = focusTarget;
+                }
+                return;
+            }
             if (D && D.dirty) {
                 openConfirm({
                     title: '編集内容を破棄しますか？',
@@ -7494,6 +8865,7 @@
               `).join('')}
             </div>
           </div>
+          <button class="btn list-secondary" data-act="pasteCase" aria-label="貼り付けて自動入力" title="案件テキストを貼り付けて自動入力">${ico('file')}<span class="btn-label">貼り付けて自動入力</span></button>
           <button class="btn primary list-primary" data-act="newCase">${ico('plus')}案件新規登録</button>
       `;
 
@@ -7583,10 +8955,11 @@
         </div>
       </div>
       <div class="grid2">
-        <label class="lbl">最低 JLPT 要件<select class="sel" data-b="jlptRequirement">${opts(['不問', 'N3', 'N2', 'N1'], curJlpt)}</select></label>
+        <label class="lbl">最低 JLPT 要件<select class="sel" data-b="jlptRequirement">${opts(['不問', 'N5', 'N4', 'N3', 'N2', 'N1'], curJlpt)}</select></label>
         <label class="lbl">ビジネス日本語要件<select class="sel" data-b="businessJapaneseRequirement">${opts(['不問', 'ビジネス流暢必須'], curBiz)}</select></label>
       </div>
       <label class="lbl">日本語スコア重み<input class="field num" type="number" inputmode="decimal" min="0" data-b="japaneseWeight" value="${c.japaneseWeight}" placeholder="重み"></label>
+      ${caseExtBlock(c)}
       <div class="wsum ${sum <= 0 ? 'bad' : ''}" id="caseWsum">
         <span>重み合計 <b class="num">${sum}</b></span>
         <span class="faint">推奨合計 100（任意）</span>
@@ -7605,6 +8978,446 @@
 
         function showCaseDrawer() {
             openDrawer(D.isNew ? '案件新規登録' : `案件編集 · ${esc(D.data.title)}`, caseForm());
+        }
+
+        /* ============================================================================
+           案件テキスト自動入力：貼り付け → 解析 → 人が確認 → 案件フォームへ
+           ----------------------------------------------------------------------------
+           设计原则与全项目保持一致：
+             1. 不做「一键全自动」。解析结果必然附带原文证据（高亮）与置信度，
+                低置信项以「要確認」形式交还给人判断，与既有的「年数未確認」同一套思路。
+             2. 解析只在浏览器内进行，原文不外发（单文件离线运行，零依赖）。
+             3. 确认后的结果写进现有 caseForm()，保存/校验/评分全部复用既有逻辑，
+                新增的 ext 字段仅作展示，不参与 evaluate() 打分。
+           ============================================================================ */
+
+        /** 原文高亮的分类映射：kind → [CSS 类, 说明]（与解析引擎输出的 kind 一一对应） */
+        const PC_GROUP = {
+            skill: ['g-skill', 'スキル'], phase: ['g-req', '工程・職種'], domain: ['g-req', 'ドメイン'],
+            role: ['g-req', '職種'], person: ['g-req', '人物要件'],
+            period: ['g-time', '時期・期間'], years: ['g-time', '年数'],
+            location: ['g-place', '勤務地'], remote: ['g-place', 'リモート'], commute: ['g-place', '通勤'],
+            money: ['g-money', '単価'], settle: ['g-money', '精算'],
+            jp: ['g-jp', '日本語'], nat: ['g-jp', '外国籍'], age: ['g-jp', '年齢'],
+            interview: ['g-jp', '面談'], commerce: ['g-jp', '商流']
+        };
+
+        /** 图例（6 种颜色对应 6 类信息） */
+        const PC_LEGEND = [
+            ['var(--pc-skill)', 'スキル・工程'], ['var(--pc-req)', '必須・人物要件'],
+            ['var(--pc-time)', '時期'], ['var(--pc-place)', '勤務地'],
+            ['var(--pc-money)', '単価・精算'], ['var(--pc-jp)', '日本語・国籍']
+        ];
+
+        /**
+         * 把 ext 里可能出现的各种形状统一成可显示的文本
+         * （解析引擎对 commerce 返回对象、其余返回字符串，这里一次性抹平）
+         */
+        function pcText(v) {
+            if (v == null) return '';
+            if (typeof v === 'string' || typeof v === 'number') return String(v);
+            if (typeof v === 'object') {
+                const base = v.value || v.range || v.text || '';
+                return base + (v.cond ? `（${v.cond}）` : '');
+            }
+            return '';
+        }
+
+        /** 置信度 → 圆点等级（>=0.85 高 / >=0.6 中 / 其余要確認） */
+        function pcDotClass(conf) {
+            const c = +conf || 0;
+            if (c >= 0.85) return 'hi';
+            if (c >= 0.6) return 'mid';
+            return 'low';
+        }
+
+        /** 现有技术者/案件里出现过的技能表记，用于把解析结果向既有写法对齐 */
+        function vocabSkillNames() {
+            const set = new Set();
+            (S.techs || []).forEach(t => (t.skills || []).forEach(s => { if (s && s.name) set.add(s.name); }));
+            (S.cases || []).forEach(c => (c.skillConditions || []).forEach(k => { if (k && k.skillName) set.add(k.skillName); }));
+            return [...set];
+        }
+
+        /**
+         * 原文高亮：span 之间的「包含」关系用嵌套 mark 表达（例：外国籍条件里嵌着日语要求），
+         * 交叉的 span 会让标签闭合错乱，因此保留先采用（更长）的一方，丢弃交叉项。
+         */
+        function pcHighlightHTML(raw, spans) {
+            const src = String(raw || '');
+            const sorted = (spans || [])
+                .filter(s => s && s.start >= 0 && s.end <= src.length && s.end > s.start)
+                .sort((a, b) => a.start - b.start || b.end - a.end);
+
+            const kept = [];
+            for (const sp of sorted) {
+                const cross = kept.some(k =>
+                    (k.start < sp.start && sp.start < k.end && k.end < sp.end) ||
+                    (sp.start < k.start && k.start < sp.end && sp.end < k.end));
+                if (!cross) kept.push(sp);
+            }
+
+            const evs = [];
+            kept.forEach(sp => {
+                evs.push({ p: sp.start, t: 'open', sp });
+                evs.push({ p: sp.end, t: 'close', sp });
+            });
+            // 同一位置先闭合再开启，避免出现空标签
+            evs.sort((a, b) => a.p - b.p || (a.t === 'close' ? -1 : 1));
+
+            let html = '', pos = 0;
+            for (const ev of evs) {
+                if (ev.p > pos) { html += esc(src.slice(pos, ev.p)); pos = ev.p; }
+                if (ev.t === 'open') {
+                    const g = PC_GROUP[ev.sp.kind] || ['g-skill', ev.sp.label || ''];
+                    html += `<mark class="${g[0]}" title="${esc(ev.sp.label || g[1])}">`;
+                } else {
+                    html += '</mark>';
+                }
+            }
+            html += esc(src.slice(pos));
+            return html;
+        }
+
+        function pcLegendHTML() {
+            return `<span class="pc-legend">${PC_LEGEND.map(([color, label]) =>
+                `<span><i style="background:${color}"></i>${label}</span>`).join('')}</span>`;
+        }
+
+        /** 解析结果 → 字段卡片（核心项总是显示；可选项抽到了才显示，避免「未抽出」刷屏） */
+        function pcFieldsHTML(res) {
+            const c = res.case || {}, e = res.ext || {};
+            const jpVal = [e.jlpt, e.biz].filter(x => x && x !== '不問').join(' / ');
+            // core=true：即使是空的也显示「未抽出」，因为这几项决定案件能不能用
+            const items = [
+                ['開始・期間', e.periodText || '', e.startConf, true],
+                ['勤務地', c.location || '', null, true],
+                ['リモート', pcText(e.remote), null, true],
+                ['単価・予算', (e.budgetText || '') + (e.budgetLevel ? '（低予算）' : ''), null, true],
+                ['精算', (e.settlement || '') + (e.settleRange ? `（${e.settleRange}）` : ''), null, true],
+                ['日本語', jpVal || (e.jlpt === '不問' && e.biz === '不問' ? '不問' : ''), e.jpConf, true],
+                ['外国籍', [e.nationality, e.nationalityCond].filter(Boolean).join(' / '), null, true],
+                ['通勤', pcText(e.commute), null, false],
+                ['年齢', pcText(e.ageLimit), null, false],
+                ['面談', pcText(e.interview), null, false],
+                ['商流', pcText(e.commerce), null, false],
+                ['職種', (e.roles || []).join('・'), null, false],
+                ['全体経験', e.totalYears ? `${e.totalYears} 年` : '', null, false],
+                ['工程', (e.phases || []).join('・'), null, false],
+                ['ドメイン', (e.domains || []).join('・'), null, false],
+                ['人物要件', (e.personReqs || []).join('・'), null, false]
+            ];
+
+            return items.filter(([, v, , core]) => core || String(v == null ? '' : v).trim()).map(([k, v, conf]) => {
+                const val = String(v == null ? '' : v).trim();
+                const dot = conf
+                    ? `<i class="pc-dot ${pcDotClass(conf)}" title="信頼度 ${Math.round((+conf || 0) * 100)}%"></i>`
+                    : `<i class="pc-dot none"></i>`;
+                return `<div class="pc-f">${dot}<span class="pc-fk">${esc(k)}</span>
+                    <span class="pc-fv ${val ? '' : 'miss'}">${val ? esc(val) : '未抽出'}</span></div>`;
+            }).join('');
+        }
+
+        /** 技能表（可在解析结果上直接改，改完再交给案件表单） */
+        function pcSkillsHTML() {
+            const list = (P && P.skills) || [];
+            if (!list.length) {
+                return `<div class="empty" style="padding:16px">スキルを抽出できませんでした。下の未認識語から追加するか、手動で追加してください。</div>`;
+            }
+            return `
+                <div class="rowhead case"><span>スキル名</span><span>最低年数</span><span>必須</span><span>重み</span><span></span></div>
+                ${list.map((s, i) => `
+                  <div class="row case" data-si="${i}">
+                    <label class="mini-field mf-kn"><span class="mini-lbl">スキル名</span>
+                      <input class="field" data-pk="skillName" value="${esc(s.skillName)}" aria-label="スキル名" placeholder="スキル名"
+                        title="${esc(s.evidence || '')}${s.alignedFrom ? `\n原文表記: ${esc(s.alignedFrom)}` : ''}"></label>
+                    <label class="mini-field mf-km"><span class="mini-lbl">最低年数</span>
+                      <input class="field num" type="number" inputmode="decimal" min="0" step="0.5" data-pk="minYears"
+                        value="${s.minYears == null ? '' : s.minYears}" aria-label="最低年数" placeholder="最低年数"></label>
+                    <label class="mf-kh" style="display:flex;gap:6px;align-items:center">
+                      <input type="checkbox" data-pk="isHard" ${s.isHard ? 'checked' : ''}>必須</label>
+                    <label class="mini-field mf-kw"><span class="mini-lbl">重み</span>
+                      <input class="field num" type="number" inputmode="decimal" min="0" data-pk="weight"
+                        value="${s.weight}" aria-label="重み" placeholder="重み"></label>
+                    <button class="x" data-act="delPasteSkill" data-i="${i}" aria-label="削除">${ico('x')}</button>
+                  </div>`).join('')}`;
+        }
+
+        /** 必须技能缺少年数时的即时提示（不阻塞，登记时自动补 1 年） */
+        function syncPasteSkillWarn() {
+            const el = $('#pcSkWarn');
+            if (!el) return;
+            const bad = ((P && P.skills) || []).filter(s => s.isHard && !(s.minYears > 0));
+            el.style.display = bad.length ? '' : 'none';
+            el.textContent = bad.length ? `必須スキル ${bad.length} 件に年数がありません（登録時に 1 年として補正されます）` : '';
+        }
+
+        /** 警告列表（bad / warn / info 三档） */
+        function pcWarnsHTML(warnings) {
+            const list = warnings || [];
+            if (!list.length) return '';
+            return `<div class="pc-warns">${list.map(w => {
+                const lv = w.level === 'bad' ? 'bad' : (w.level === 'info' ? 'info' : 'warn');
+                const icon = lv === 'info' ? ico('info') : ico('warn');
+                return `<div class="pc-w ${lv}">${icon}<span>${esc(w.text)}</span></div>`;
+            }).join('')}</div>`;
+        }
+
+        /** 未认识词：点一下即升级为技能（词典外的专有名词主要靠这里补） */
+        function pcUnknownHTML() {
+            const words = (P && P.result && P.result.unknown) || [];
+            return words.map(w => `<button class="chip line pc-unknown" data-act="addPasteSkill" data-w="${esc(w)}">${ico('plus')}${esc(w)}</button>`).join('');
+        }
+
+        /** 贴纸解析抽屉的主体 HTML（输入态 / 确认态两段式） */
+        function pasteBody() {
+            if (!P) return '';
+            const confirmed = P.step === 'confirm' && P.result;
+            const res = P.result;
+            const stale = confirmed && P.text !== P.parsedText;
+
+            const srcBlock = confirmed
+                ? `<details class="pc-src">
+                     <summary>原文を表示・編集（<span id="pcSrcCount">${P.text.length}</span> 文字）</summary>
+                     <textarea class="field pc-ta" id="pcTa" rows="7" spellcheck="false">${esc(P.text)}</textarea>
+                   </details>`
+                : `<textarea class="field pc-ta" id="pcTa" rows="11" spellcheck="false"
+                     placeholder="例）&#10;11月～中長期&#10;川崎駅　※リモート有&#10;◆必須&#10;・Java開発経験3年以上&#10;精算無し"></textarea>`;
+
+            return `
+    <div class="dr-b">
+      <div class="pc-sec">
+        <div class="pc-sec-h">
+          <b>案件テキストを貼り付け</b>
+          <span class="faint sm">メール・DM・チャットの文面をそのまま貼り付けてください</span>
+        </div>
+        ${srcBlock}
+        <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+          <button class="btn ${confirmed ? '' : 'primary'}" data-act="runParse">${ico('zap')}${confirmed ? '再解析' : '解析する'}</button>
+          ${confirmed ? `<button class="btn ghost sm" data-act="pasteReset">クリア</button>` : ''}
+          <span class="faint sm">原文はブラウザ内でのみ処理され、外部送信はありません</span>
+        </div>
+      </div>
+      ${confirmed ? `
+      <div class="pc-sec">
+        <div class="pc-sec-h">
+          <b>抽出結果</b>
+          <span class="faint sm">${res.stats.chars} 文字 / ${res.stats.skillCount} スキル / ${res.stats.ms}ms</span>
+        </div>
+        <div class="pc-fields">${pcFieldsHTML(res)}</div>
+        ${pcWarnsHTML(res.warnings)}
+      </div>
+      <div class="pc-sec">
+        <div class="pc-sec-h"><b>原文のどこを拾ったか</b>${pcLegendHTML()}</div>
+        <div class="pc-hl">${pcHighlightHTML(P.parsedText, res.spans)}</div>
+      </div>
+      <div class="pc-sec">
+        <div class="pc-sec-h">
+          <b>スキル要件</b>
+          <span class="faint sm">ここで修正した内容が案件フォームに引き継がれます</span>
+        </div>
+        <div class="rows" id="pcSkills">${pcSkillsHTML()}</div>
+        <div class="chip warn" id="pcSkWarn" style="display:none"></div>
+        <div><button class="btn sm" data-act="addPasteSkill">${ico('plus')}スキルを追加</button></div>
+      </div>
+      ${(res.unknown || []).length ? `
+      <div class="pc-sec">
+        <div class="pc-sec-h"><b>未認識語</b><span class="faint sm">クリックでスキルとして追加</span></div>
+        <div class="pc-tags">${pcUnknownHTML()}</div>
+      </div>` : ''}
+      ` : ''}
+    </div>
+    ${confirmed ? `
+    <div class="dr-f">
+      <div class="btn-row"><button class="btn" data-act="closeDr">キャンセル</button></div>
+      <div class="btn-row">
+        <span class="chip warn" id="pcStale" style="display:${stale ? 'inline-flex' : 'none'}">原文が変更されています</span>
+        <button class="btn primary" id="pcApply" data-act="applyParse" ${stale ? 'disabled' : ''}>この内容で案件フォームへ</button>
+      </div>
+    </div>` : ''}
+  `;
+        }
+
+        /**
+         * 重绘抽屉内容（只替换 .dr-b / .dr-f，保留抽屉标题与滚动位置）
+         * @param {boolean} [resetScroll] true 时回到顶部（解析完成后使用）
+         */
+        function renderPaste(resetScroll) {
+            const d = $('#drawer');
+            if (!d || !P) return;
+            const keep = resetScroll ? 0 : (d.querySelector('.dr-b')?.scrollTop || 0);
+            d.querySelectorAll('.dr-b, .dr-f').forEach(n => n.remove());
+            d.insertAdjacentHTML('beforeend', pasteBody());
+            const b = d.querySelector('.dr-b');
+            if (b) b.scrollTop = keep;
+            attachPasteHandlers();
+            syncPasteSkillWarn();
+        }
+
+        /**
+         * 绑定解析抽屉内的输入事件
+         * 不用全局 data-b 绑定：这里的草稿是 P 而不是 D，且只局部更新、不整页重绘，
+         * 避免手机上输入法键盘被重建打断。
+         */
+        function attachPasteHandlers() {
+            const ta = $('#pcTa');
+            if (ta) {
+                if (!ta.value && P && P.text) ta.value = P.text;
+                ta.oninput = e => {
+                    if (!P) return;
+                    P.text = e.target.value;
+                    const stale = P.step === 'confirm' && P.text !== P.parsedText;
+                    const btn = $('#pcApply');
+                    if (btn) btn.disabled = stale;
+                    const chip = $('#pcStale');
+                    if (chip) chip.style.display = stale ? 'inline-flex' : 'none';
+                    const cnt = $('#pcSrcCount');
+                    if (cnt) cnt.textContent = P.text.length;
+                };
+            }
+
+            const box = $('#pcSkills');
+            if (box) {
+                box.oninput = e => {
+                    const inp = e.target.closest('[data-pk]');
+                    if (!inp || !P) return;
+                    const row = inp.closest('[data-si]');
+                    if (!row) return;
+                    const s = P.skills[+row.dataset.si];
+                    if (!s) return;
+                    const k = inp.dataset.pk;
+                    if (k === 'minYears') s.minYears = inp.value === '' ? null : +inp.value;
+                    else if (k === 'weight') s.weight = +inp.value || 0;
+                    else if (k === 'isHard') s.isHard = inp.checked;
+                    else if (k === 'skillName') s.skillName = inp.value;
+                    syncPasteSkillWarn();
+                };
+            }
+        }
+
+        /** 解析结果 + 人工修正 → 案件表单草稿 */
+        function applyPasteToCaseDraft() {
+            const res = P.result;
+            const e = P.ext || {};
+            let skills = (P.skills || [])
+                .map(s => ({
+                    skillName: String(s.skillName || '').trim(),
+                    minYears: s.minYears == null ? (s.isHard ? 1 : 0) : +s.minYears,
+                    isHard: !!s.isHard,
+                    weight: +s.weight || 0
+                }))
+                .filter(s => s.skillName);
+
+            if (!skills.length) skills = [{ skillName: '', minYears: 1, isHard: false, weight: 50 }];
+
+            // 既有校验要求「权重合计 > 0」，解析结果为空权重时给一个可保存的默认值
+            const jw = +res.case.japaneseWeight || 0;
+            if (skills.reduce((a, k) => a + k.weight, 0) + jw <= 0) skills[0].weight = 100;
+
+            return {
+                id: uid('c'),
+                title: res.case.title || '',
+                client: res.case.client || '',
+                location: res.case.location || '',
+                unitPriceText: res.case.unitPriceText || '',
+                startDate: res.case.startDate || TODAY,
+                status: '募集中',
+                skillConditions: skills,
+                jlptRequirement: res.case.jlptRequirement || '不問',
+                businessJapaneseRequirement: res.case.businessJapaneseRequirement || '不問',
+                japaneseWeight: jw,
+                // 新增的参考信息（只读展示，evaluate() 不读取，不影响评分）
+                ext: {
+                    periodText: e.periodText || '',
+                    duration: e.duration || '',
+                    remote: pcText(e.remote),
+                    commute: pcText(e.commute),
+                    settlement: e.settlement || '',
+                    settleRange: e.settleRange || '',
+                    budgetText: e.budgetText || '',
+                    budgetLevel: e.budgetLevel || '',
+                    nationality: e.nationality || '',
+                    nationalityCond: e.nationalityCond || '',
+                    ageLimit: pcText(e.ageLimit),
+                    interview: pcText(e.interview),
+                    commerce: pcText(e.commerce),
+                    roles: e.roles || [],
+                    phases: e.phases || [],
+                    domains: e.domains || [],
+                    personReqs: e.personReqs || [],
+                    totalYears: e.totalYears || null,
+                    parsedAt: new Date().toISOString(),
+                    // 原文留档：便于事后核对「当时写的是什么」，最多存 2000 字
+                    source: String(P.parsedText || '').slice(0, 2000)
+                }
+            };
+        }
+
+        /** 案件表单里显示抽取到的补充信息（只读；老案件没有 ext 时不显示） */
+        function caseExtBlock(c) {
+            const e = c.ext;
+            if (!e) return '';
+            const rows = [
+                ['開始・期間', e.periodText],
+                ['リモート', e.remote],
+                ['通勤', e.commute],
+                ['精算', (e.settlement || '') + (e.settleRange ? `（${e.settleRange}）` : '')],
+                ['国籍', [e.nationality, e.nationalityCond].filter(Boolean).join(' / ')],
+                ['年齢', e.ageLimit],
+                ['面談', e.interview],
+                ['商流', e.commerce],
+                ['職種', (e.roles || []).join('・')],
+                ['全体経験', e.totalYears ? `${e.totalYears} 年` : ''],
+                ['工程', (e.phases || []).join('・')],
+                ['ドメイン', (e.domains || []).join('・')],
+                ['人物要件', (e.personReqs || []).join('・')]
+            ].filter(r => String(r[1] || '').trim());
+
+            if (!rows.length && !e.source) return '';
+
+            return `
+      <div class="pc-sec">
+        <div class="pc-sec-h">
+          <b>原文から抽出した補足情報</b>
+          <span class="faint sm">参考情報・スコア計算には未使用</span>
+        </div>
+        ${rows.length ? `<div class="pc-meta">${rows.map(([k, v]) =>
+                `<div><b>${esc(k)}</b><span>${esc(v)}</span></div>`).join('')}</div>` : ''}
+        ${e.source ? `<details class="pc-src"><summary>取り込み元の原文を見る</summary>
+          <div class="pc-hl" style="max-height:170px">${esc(e.source)}</div></details>` : ''}
+      </div>`;
+        }
+
+        /** 打开「貼り付けて自動入力」抽屉 */
+        function openPasteDrawer() {
+            P = { step: 'input', text: '', parsedText: '', result: null, skills: [], ext: {} };
+            openDrawer('案件テキストから自動入力', pasteBody(), { sheet: true });
+            attachPasteHandlers();
+            const ta = $('#pcTa');
+            if (ta) ta.focus();
+        }
+
+        /** 执行解析：把原文交给内联引擎，结果暂存在 P 里等待人工确认 */
+        function runPasteParse() {
+            if (!P) return;
+            const text = String(P.text || '');
+            if (!text.trim()) { toast('案件テキストを貼り付けてください'); return; }
+            if (typeof TechCaseParser === 'undefined') { toast('解析エンジンを読み込めませんでした'); return; }
+
+            const res = TechCaseParser.parse(text, { now: TODAY, vocab: vocabSkillNames() });
+            P.result = res;
+            P.parsedText = text;
+            P.ext = res.ext || {};
+            P.skills = (res.skills || []).map(s => ({
+                skillName: s.skillName,
+                minYears: s.minYears,
+                isHard: !!s.isHard,
+                weight: +s.weight || 0,
+                evidence: (s.evidenceLines || [s.evidence || '']).filter(Boolean).join(' / '),
+                alignedFrom: s.alignedFrom || ''
+            }));
+            P.step = 'confirm';
+            renderPaste(true);
         }
 
         /* ============================================================================
@@ -8441,6 +10254,45 @@
                     }
                 };
                 showCaseDrawer();
+            },
+            /* ---------- 案件テキスト自動入力（貼り付け解析）---------- */
+            pasteCase() { openPasteDrawer(); },
+            runParse() { runPasteParse(); },
+            pasteReset() {
+                if (!P) return;
+                P = { step: 'input', text: '', parsedText: '', result: null, skills: [], ext: {} };
+                renderPaste(true);
+                const ta = $('#pcTa');
+                if (ta) ta.focus();
+            },
+            /** 未認識語チップ / 空行追加。チップからは data-w に語が入る */
+            addPasteSkill(el) {
+                if (!P) return;
+                const w = el && el.dataset.w ? el.dataset.w : '';
+                P.skills.push({
+                    skillName: w, minYears: w ? 1 : 1, isHard: !!w, weight: 10,
+                    evidence: w ? '未認識語から追加' : '', alignedFrom: ''
+                });
+                if (w && el) el.remove();               // 多重追加を防ぐ
+                const box = $('#pcSkills');
+                if (box) box.innerHTML = pcSkillsHTML();
+                syncPasteSkillWarn();
+            },
+            delPasteSkill(el) {
+                if (!P) return;
+                P.skills.splice(+el.dataset.i, 1);
+                const box = $('#pcSkills');
+                if (box) box.innerHTML = pcSkillsHTML();
+                syncPasteSkillWarn();
+            },
+            /** 解析結果を確定して既存の案件フォームへ引き渡す */
+            applyParse() {
+                if (!P || !P.result) return;
+                if (P.text !== P.parsedText) { toast('原文が変更されています。再解析してください'); return; }
+                D = { kind: 'case', isNew: true, data: applyPasteToCaseDraft() };
+                P = null;
+                showCaseDrawer();
+                toast('解析結果を案件フォームに反映しました。内容を確認してください');
             },
             editCase(el) {
                 D = { kind: 'case', data: clone(S.cases.find(c => c.id === el.dataset.id)) };
